@@ -5,6 +5,7 @@ package hackathon.dclab.com.minidianping;
  *
  */
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.security.KeyStore;
@@ -34,6 +35,8 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 
 /**
@@ -144,6 +147,25 @@ public class NetUtils {
         return null;
     }
 
+
+    public static Bitmap getBitmap(String imgUrl) {
+        Bitmap bm = null;
+        try {
+            HttpClient client = getNewHttpClient();
+            HttpGet getMethod = new HttpGet(imgUrl);
+            HttpResponse response = client.execute(getMethod);
+            int statueCode = response.getStatusLine().getStatusCode();
+            if(statueCode == 200) {
+                System.out.print(statueCode);
+                InputStream is = response.getEntity().getContent();
+                bm = BitmapFactory.decodeStream(is);
+                is.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return bm;
+    }
     // 保存时+当时的秒数，
     public static long expires(String second) {
         Long l = Long.valueOf(second);
