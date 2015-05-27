@@ -11,7 +11,7 @@ import java.util.Map;
 public class Restaurant {
     private String id;
     private String name;
-    private int rating;
+    private float rating;
     private int average;
     private Map<String,String> mustOrder;
     private List<String> recommendReason;
@@ -39,11 +39,11 @@ public class Restaurant {
         this.name = name;
     }
 
-    public int getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
