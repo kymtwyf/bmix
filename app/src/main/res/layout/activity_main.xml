@@ -1,27 +1,98 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".MainActivity"
    >
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
+    <TextView android:text="豆蔻电影主题餐厅" android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/longitude" />
+        android:id="@+id/tvHeader"
+        android:background="@color/title_green"
+        android:textSize="22dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="@color/white"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp" />
 
-    <TextView
-        android:text="@string/hello_world"
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/latitude"
-        android:layout_below="@+id/longitude" />
+        android:layout_height="200dp"
+        android:id="@+id/ivPreview"
+        android:background="@drawable/bg_preview_example"
+        android:layout_below="@+id/tvHeader" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/ivPreview"
+        android:background="@color/bg_grey_transparent"
+        >
+
+        <TextView
+            android:text="8.5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvRating"
+            android:textColor="@color/white"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:textSize="40dp" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lv_wrapper"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp">
+
+            <TextView
+                android:text="人均消费：82元/人"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvAverage"
+                android:textColor="@color/white"
+                android:layout_above="@+id/tvRate" />
+
+            <TextView
+                android:text="人均消费：82元/人"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvRate"
+                android:textColor="@color/white"
+                android:layout_alignParentBottom="true" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:id="@+id/getImage"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/ivYes"
+            android:layout_weight="1"
+            android:background="@color/color_bg_yes" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/ivNo"
+            android:layout_weight="1"
+            android:background="@color/color_bg_no" />
+    </LinearLayout>
 
 </RelativeLayout>

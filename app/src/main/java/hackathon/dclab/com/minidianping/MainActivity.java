@@ -1,33 +1,24 @@
 package hackathon.dclab.com.minidianping;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Bitmap;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Message;
-import android.speech.tts.TextToSpeech;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 
-import org.w3c.dom.Text;
 
-import java.util.List;
-
-
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
     private static String TAG = "MainActivity";
     private ImageView imgView;
-    private TextView tvLongtitude;
+    private TextView tvHeader;
     private TextView tvLatitude;
 
     private Handler handler;
@@ -37,11 +28,17 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        //Remove notification bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imgView = (ImageView)findViewById(R.id.getImage);
-        tvLatitude = (TextView)findViewById(R.id.latitude);
-        tvLongtitude = (TextView)findViewById(R.id.longitude);
+        tvLatitude = (TextView)findViewById(R.id.tvHeader);
+//        tvLongtitude = (TextView)findViewById(R.id.tvHeader);
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -69,30 +66,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     Runnable testGetImg = new Runnable() {
         @Override
