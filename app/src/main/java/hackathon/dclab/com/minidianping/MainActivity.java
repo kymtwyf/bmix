@@ -16,6 +16,9 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+
 import org.w3c.dom.Text;
 
 import java.util.List;
@@ -28,10 +31,9 @@ public class MainActivity extends ActionBarActivity {
     private TextView tvLatitude;
 
     private Handler handler;
-    private LocationManager mLocationManager;
 
     public static final int MSG_UPDATE_TEST = 0;
-
+    private LocationClient mLocationClient = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,26 +59,12 @@ public class MainActivity extends ActionBarActivity {
 
         (new Thread(testGetImg)).start();
 
-        mLocationManager= (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Location tmpLocation = getLastBestLocation();
+        mLocationClient = ((DPApplication)getApplication()).mLocationClient;
+        LocationClientOption option = new LocationClientOption();
+        initLocationOptions(option);//设置定位参数
+        mLocationClient.setLocOption(option);
 
-        if(null != tmpLocation){
-            DPApplication dpapp = (DPApplication)getApplicationContext();
-            dpapp.setLocation(tmpLocation);
-            Log.e(TAG,"SETTING KNOWN LOCATION");
-
-            tvLatitude.setText(tmpLocation.getLatitude()+"");
-            tvLongtitude.setText(tmpLocation.getLongitude()+"");
-        }else{
-            Log.e(TAG,"unkonwn location");
-        }
-        if (mLocationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)
-                && mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
-        if (mLocationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER))
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
+        mLocationClient.start();
 
     }
 
@@ -115,64 +103,24 @@ public class MainActivity extends ActionBarActivity {
             handler.obtainMessage(MSG_UPDATE_TEST,bm).sendToTarget();
         }
     };
-
-
-    /**
-     * @return the last know best location
+    /**设置定位参数
+     * @param option
      */
-    private Location getLastBestLocation() {
-        Location locationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Location locationNet = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+    private void initLocationOptions(LocationClientOption option) {
+        option.setOpenGps(true);//打开gps
+        option.setCoorType("bd09ll");//设置坐标类型Baidu encoded latitude & longtitude
+        option.setScanSpan(1000 * 60 * 5);//扫描间隔5min
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);//GPS + Network locating
+        option.setAddrType("all");//locating results include all address infos
+        option.setIsNeedAddress(true);//include address infos
+    }
+    @Override
+    protected void onDestroy() {
+        // 退出时停止定位sdk
+        ((DPApplication)getApplication()).mLocationClient.stop();
 
-        long GPSLocationTime = 0;
-        if (null != locationGPS) { GPSLocationTime = locationGPS.getTime(); }
-
-        long NetLocationTime = 0;
-
-        if (null != locationNet) {
-            NetLocationTime = locationNet.getTime();
-        }
-
-        if ( 0 < GPSLocationTime - NetLocationTime ) {
-            return locationGPS;
-        }
-        else {
-            return locationNet;
-        }
+        super.onDestroy();
     }
 
-    private LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            Log.e(TAG,"onchange ");
 
-            if (location != null) {
-                Log.e("Map", "Location changed : Lat: "
-                        + location.getLatitude() + " Lng: "
-                        + location.getLongitude());
-                DPApplication dpapp = (DPApplication)getApplicationContext();
-                dpapp.setLocation(location);
-                Log.e(TAG,"SETTING ON CHANGE LOCATION");
-                tvLatitude.setText(location.getLatitude()+"");
-                tvLongtitude.setText(location.getLongitude()+"");
-            }else{
-                Log.e(TAG,"onchange get null location");
-            }
-        }
-
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String s) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String s) {
-
-        }
-    };
 }
