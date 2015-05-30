@@ -7,6 +7,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -42,6 +43,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         imgView = (ImageView)findViewById(R.id.getImage);
         tvLatitude = (TextView)findViewById(R.id.latitude);
         tvLongtitude = (TextView)findViewById(R.id.longitude);
@@ -69,6 +72,9 @@ public class MainActivity extends ActionBarActivity {
 
         HTTPUtils http = new HTTPUtils();
         GeoInfo geo = new GeoInfo();
+        geo.county = "China";
+        geo.city = "Shanghai";
+        geo.district = "Minhang";
         Mode mode = new Mode();
         http.Recommend("123456",geo,mode);
     }

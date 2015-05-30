@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -34,6 +35,7 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -125,8 +127,9 @@ public class NetUtils {
      * @param params
      * @return
      */
+    @SuppressLint("NewApi")
     public static String postRequest(String urlString,
-                                     List<BasicNameValuePair> params) {
+                                     List<NameValuePair> params) {
 
         try {
             // 1. 创建HttpClient对象
@@ -134,14 +137,15 @@ public class NetUtils {
             // 2. 发get请求创建HttpGet对象
             HttpPost postMethod = new HttpPost(urlString);
             postMethod.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-            HttpResponse response = client.execute(postMethod);
+            //HttpResponse response = client.execute(postMethod);
+            HttpResponse response = new DefaultHttpClient().execute(postMethod);
             int statueCode = response.getStatusLine().getStatusCode();
             if (statueCode == 200) {
                 System.out.println(statueCode);
                 return EntityUtils.toString(response.getEntity());
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return null;
