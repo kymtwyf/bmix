@@ -23,6 +23,9 @@ import org.w3c.dom.Text;
 
 import java.util.List;
 
+import hackathon.dclab.com.minidianping.entities.GeoInfo;
+import hackathon.dclab.com.minidianping.entities.Mode;
+
 
 public class MainActivity extends ActionBarActivity {
     private static String TAG = "MainActivity";
@@ -64,8 +67,10 @@ public class MainActivity extends ActionBarActivity {
         initLocationOptions(option);//设置定位参数
         mLocationClient.setLocOption(option);
 
-        mLocationClient.start();
-
+        HTTPUtils http = new HTTPUtils();
+        GeoInfo geo = new GeoInfo();
+        Mode mode = new Mode();
+        http.Recommend("123456",geo,mode);
     }
 
 
@@ -121,6 +126,4 @@ public class MainActivity extends ActionBarActivity {
 
         super.onDestroy();
     }
-
-
 }
