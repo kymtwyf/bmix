@@ -20,4 +20,6 @@
     <color name="bg_grey_transparent">#6427201A</color>
     <color name="color_bg_yes">#FF96E949</color>
     <color name="color_bg_no">#FFFC5B62</color>
+    <color name="color_listview_label_grey">#FFEAE9EE</color>
+    <color name="color_recommend_yellow">#FFFBF387</color>
 </resources>

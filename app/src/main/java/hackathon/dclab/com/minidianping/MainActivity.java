@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.baidu.location.LocationClient;
@@ -17,13 +20,19 @@ import com.baidu.location.LocationClientOption;
 
 public class MainActivity extends Activity {
     private static String TAG = "MainActivity";
-    private ImageView imgView;
     private TextView tvHeader;
-    private TextView tvLatitude;
+    private ImageView ivPreview;
+    private LinearLayout llRecommendReasons;
+    private ListView lvRecommendDishes;
+    private TextView tvAverage; // 人均消费：
+    private TextView tvRatingNumber; //评分
+    private RatingBar ratingBar; //星星
+    private ImageView ivYes;
+    private ImageView ivNo;
 
     private Handler handler;
 
-    public static final int MSG_UPDATE_TEST = 0;
+    public static final int MSG_UPDATE_PREVIEW = 0;
     private LocationClient mLocationClient = null;
 
     @Override
@@ -36,18 +45,28 @@ public class MainActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        imgView = (ImageView)findViewById(R.id.getImage);
-        tvLatitude = (TextView)findViewById(R.id.tvHeader);
-//        tvLongtitude = (TextView)findViewById(R.id.tvHeader);
+        tvHeader = (TextView)findViewById(R.id.tvHeader);
+        ivPreview = (ImageView)findViewById(R.id.ivPreview);
+        llRecommendReasons = (LinearLayout)findViewById(R.id.lv_recommend_reasons);
+        lvRecommendDishes = (ListView)findViewById(R.id.lv_recommend_dishes);
+        tvAverage = (TextView)findViewById(R.id.tvAverage);
+        tvRatingNumber = (TextView)findViewById(R.id.tvRatingNumber);
+        ratingBar = (RatingBar)findViewById(R.id.ratingBar);
+        ivYes = (ImageView)findViewById(R.id.ivYes);
+        ivNo = (ImageView)findViewById(R.id.ivNo);
+
+
+
+        ivPreview.setScaleType(ImageView.ScaleType.FIT_XY);
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 Log.e(TAG,"HANDLING IMG");
 
                 switch (msg.what){
-                    case MSG_UPDATE_TEST:
+                    case MSG_UPDATE_PREVIEW:
                         Log.e(TAG,"SETTING IMG");
-                        imgView.setImageBitmap((Bitmap)msg.obj);
+                        ivPreview.setImageBitmap((Bitmap)msg.obj);
                         break;
                 }
                 super.handleMessage(msg);
@@ -56,12 +75,13 @@ public class MainActivity extends Activity {
 
         (new Thread(testGetImg)).start();
 
+        //定位相关
         mLocationClient = ((DPApplication)getApplication()).mLocationClient;
         LocationClientOption option = new LocationClientOption();
         initLocationOptions(option);//设置定位参数
         mLocationClient.setLocOption(option);
-
         mLocationClient.start();
+        //定位相关
 
     }
 
@@ -73,7 +93,8 @@ public class MainActivity extends Activity {
             Bitmap bm = NetUtils.getBitmap("http://kazge.com/wp-content/themes/deskchaos/img/outer-back.jpg");
             if(bm != null) Log.e(TAG,"get image");
             else Log.e(TAG, "cant get image");
-            handler.obtainMessage(MSG_UPDATE_TEST,bm).sendToTarget();
+            handler.obtainMessage(MSG_UPDATE_PREVIEW,bm).sendToTarget();
+
         }
     };
     /**设置定位参数
