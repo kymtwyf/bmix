@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         tvHeader = (TextView)findViewById(R.id.tvHeader);
         ivPreview = (ImageView)findViewById(R.id.ivPreview);
-        llRecommendReasons = (LinearLayout)findViewById(R.id.lv_recommend_reasons);
+        //llRecommendReasons = (LinearLayout)findViewById(R.id.special_title_list);
         lvRecommendDishes = (ListView)findViewById(R.id.lv_recommend_dishes);
         tvAverage = (TextView)findViewById(R.id.tvAverage);
         tvRatingNumber = (TextView)findViewById(R.id.tvRatingNumber);
@@ -109,9 +109,10 @@ public class MainActivity extends Activity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        System.out.println(json);
         List<Business> businesses = Business.getBusinessFromJson(json);
-        System.out.println(businesses);
+        for(int i=0; i<businesses.size();++i){
+            System.out.println(businesses.get(i).ToString());
+        }
     }
 
 
