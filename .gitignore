@@ -4,6 +4,6 @@
 /.idea/libraries
 .DS_Store
 /build
+MiniDianping.iml
 app/app.iml
 app/build.gradle
-MiniDianping.iml
