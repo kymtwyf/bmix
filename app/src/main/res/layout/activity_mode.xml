@@ -11,12 +11,8 @@
         <RadioGroup
             android:layout_width="fill_parent"
             android:layout_height="105dp"
+            android:orientation="horizontal"
             android:id="@+id/mode_person_ratio_group">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="105dp"
-                android:id="@+id/mode_person_ratio_group_container">
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -40,19 +36,14 @@
                     android:id="@+id/radio_multiperson"
                     android:layout_weight="1"
                     android:background="#ff1eff6c" />
-            </LinearLayout>
         </RadioGroup>
 
         <RadioGroup
             android:layout_width="fill_parent"
             android:layout_height="105dp"
             android:layout_gravity="left|center"
+            android:orientation="horizontal"
             android:id="@+id/mode_select_ratio_group">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="105dp"
-                android:layout_gravity="center_horizontal">
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -68,117 +59,101 @@
                     android:id="@+id/radio_tryfresh"
                     android:layout_weight="1"
                     android:background="#ff36faff" />
-            </LinearLayout>
         </RadioGroup>
 
-         <RadioGroup
-             android:layout_width="fill_parent"
-             android:layout_height="105dp"
-             android:layout_gravity="left|center"
-             android:id="@+id/mode_series_ratio_group1">
              <LinearLayout
                  android:orientation="horizontal"
                  android:layout_width="fill_parent"
                  android:layout_height="105dp"
                  android:layout_gravity="center_horizontal">
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
                      android:text="川菜"
-                     android:id="@+id/radio_chuancai"
+                     android:id="@+id/checkbox_chuancai"
                      android:layout_weight="1"
                      android:background="#ffcaff27" />
 
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="fill_parent"
                      android:text="粤菜"
-                     android:id="@+id/radio_yuecai"
+                     android:id="@+id/checkbox_yuecai"
                      android:layout_weight="1"
                      android:background="#ffcaff27" />
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
                      android:text="西北"
-                     android:id="@+id/radio_xibei"
+                     android:id="@+id/checkbox_xibei"
                      android:layout_weight="1"
                      android:background="#ffcaff27" />
 
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="fill_parent"
                      android:text="东南亚"
-                     android:id="@+id/radio_dongnanya"
+                     android:id="@+id/checkbox_dongnanya"
                      android:layout_weight="1"
                      android:background="#ffcaff27" />
              </LinearLayout>
-         </RadioGroup>
-         <RadioGroup
-             android:layout_width="fill_parent"
-             android:layout_height="105dp"
-             android:layout_gravity="left|center"
-             android:id="@+id/mode_series_ratio_group2">
+
+
              <LinearLayout
                  android:orientation="horizontal"
                  android:layout_width="fill_parent"
                  android:layout_height="105dp"
                  android:layout_gravity="center_horizontal">
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
                      android:text="东北"
-                     android:id="@+id/radio_dongbei"
+                     android:id="@+id/checkbox_dongbei"
                      android:layout_weight="1"
                      android:background="#ffd869ff" />
 
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="fill_parent"
                      android:text="火锅"
-                     android:id="@+id/radio_huoguo"
+                     android:id="@+id/checkbox_huoguo"
                      android:layout_weight="1"
                      android:background="#ffd869ff" />
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
                      android:text="西餐"
-                     android:id="@+id/radio_xican"
+                     android:id="@+id/checkbox_xican"
                      android:layout_weight="1"
                      android:background="#ffd869ff" />
 
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="fill_parent"
                      android:text="咖啡厅"
-                     android:id="@+id/radio_cafe"
+                     android:id="@+id/checkbox_cafe"
                      android:layout_weight="1"
                      android:background="#ffd869ff" />
              </LinearLayout>
-         </RadioGroup>
-         <RadioGroup
-             android:layout_width="fill_parent"
-             android:layout_height="105dp"
-             android:layout_gravity="left|center"
-             android:id="@+id/mode_series_ratio_group3">
+
              <LinearLayout
                  android:orientation="horizontal"
                  android:layout_width="fill_parent"
                  android:layout_height="105dp"
                  android:layout_gravity="center_horizontal">
-                 <RadioButton
+                 <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
                      android:text="其他"
-                     android:id="@+id/radio_others"
+                     android:id="@+id/checkbox_others"
                      android:layout_weight="1"
                      android:background="#ffff6270" />
              </LinearLayout>
-         </RadioGroup>
 
      <Button
          android:layout_width="match_parent"
          android:layout_height="match_parent"
          android:text="OK"
-         android:id="@+id/button_ok"
+         android:id="@+id/button_mode_ok"
          android:layout_gravity="center_horizontal" />
  </LinearLayout>
