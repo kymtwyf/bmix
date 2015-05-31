@@ -1,22 +1,13 @@
 package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
-import android.speech.tts.TextToSpeech;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -25,11 +16,15 @@ import android.widget.TextView;
 
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-
-import org.w3c.dom.Text;
+import com.google.gson.Gson;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import hackathon.dclab.com.minidianping.domain.Business;
 import hackathon.dclab.com.minidianping.entities.GeoInfo;
 import hackathon.dclab.com.minidianping.entities.Mode;
 
@@ -100,13 +95,23 @@ public class MainActivity extends Activity {
         //定位相关
 
 
-        HTTPUtils http = new HTTPUtils();
-        GeoInfo geo = new GeoInfo();
-        geo.county = "China";
-        geo.city = "Shanghai";
-        geo.district = "Minhang";
-        Mode mode = new Mode();
-        http.Recommend("123456",geo,mode);
+        //HttpGetRecommend http = new HttpGetRecommend();
+        GeoInfo geo = new GeoInfo("China","Shanghai","Minhang",0,0);
+        Mode mode = new Mode(2,1,0x000000);
+        Gson gs = new Gson();
+        HttpGetRecommend getRecommend = new HttpGetRecommend("123456",geo,mode);
+        ExecutorService exs= Executors.newCachedThreadPool();
+        String json = null;
+        try {
+            json = exs.submit(getRecommend).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        System.out.println(json);
+        List<Business> businesses = Business.getBusinessFromJson(json);
+        System.out.println(businesses);
     }
 
 

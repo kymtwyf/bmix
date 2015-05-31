@@ -59,6 +59,9 @@ public class Business {
         //List<Business> business_list= gs.fromJson(json,new TypeToken<List<Business>>(){}.getType());
         List<Business> business_list = new ArrayList<Business>();
         try {
+            System.out.println("1"+json.charAt(748));
+            System.out.println("2"+json.charAt(749));
+            System.out.println("3" + json.charAt(750));
             JSONObject datajson = new JSONObject(json);
             JSONArray businesses = datajson.getJSONArray("businesses");
             for(int i=0; i<businesses.length();++i){

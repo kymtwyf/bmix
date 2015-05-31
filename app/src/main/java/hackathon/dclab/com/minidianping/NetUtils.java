@@ -127,7 +127,6 @@ public class NetUtils {
      * @param params
      * @return
      */
-    @SuppressLint("NewApi")
     public static String postRequest(String urlString,
                                      List<NameValuePair> params) {
 

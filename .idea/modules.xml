@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MiniDianping.iml" filepath="$PROJECT_DIR$/MiniDianping.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/bmix.iml" filepath="$PROJECT_DIR$/bmix.iml" />
     </modules>
   </component>
 </project>
-
