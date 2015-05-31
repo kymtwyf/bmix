@@ -72,7 +72,7 @@ public class Business {
 
     public static List<Business> getBusinessFromJson(String json){
         Gson gs = new Gson();
-        json = "{\"businesses\":[{\"recommend_mark\":8.5,\"favourite_dishes\":[{\"id\":\"6013503-201\",\"price\":58,\"name\":\"大盘蛙\"},{\"id\":\"6013503-201\",\"price\":66,\"name\":\"法式培根卷\"}],\"pic_url\":\"http:\\/\\/i2.dpfile.com\\/pc\\/2cc774cdf2400e20521c6aebede4bf55(700x700)\\/thumb.jpg\",\"average_cost\":80,\"id\":6013503,\"distance\":200,\"tels\":[\"021-61397933\",\"13579246810\"],\"address\":\"普陀区真光路1288号百联中环购物广场4楼\",\"groupon\":{\"type\":\"川湘菜\",\"url\":\"http:\\/\\/t.dianping.com\\/deal\\/11169900\",\"price\":85,\"name\":\"[15店通用]70后饭吧\"},\"name\":\"70后饭吧\",\"longitude\":121.38308,\"latitude\":31.245836,\"dp_business_id\":1,\"recommend_reason\":[\"价格便宜\",\"环境优雅\"]}]}";
+        //json = "{\"businesses\":[{\"recommend_mark\":8.5,\"favourite_dishes\":[{\"id\":\"6013503-201\",\"price\":58,\"name\":\"大盘蛙\"},{\"id\":\"6013503-201\",\"price\":66,\"name\":\"法式培根卷\"}],\"pic_url\":\"http:\\/\\/i2.dpfile.com\\/pc\\/2cc774cdf2400e20521c6aebede4bf55(700x700)\\/thumb.jpg\",\"average_cost\":80,\"id\":6013503,\"distance\":200,\"tels\":[\"021-61397933\",\"13579246810\"],\"address\":\"普陀区真光路1288号百联中环购物广场4楼\",\"groupon\":{\"type\":\"川湘菜\",\"url\":\"http:\\/\\/t.dianping.com\\/deal\\/11169900\",\"price\":85,\"name\":\"[15店通用]70后饭吧\"},\"name\":\"70后饭吧\",\"longitude\":121.38308,\"latitude\":31.245836,\"dp_business_id\":1,\"recommend_reason\":[\"价格便宜\",\"环境优雅\"]}]}";
         List<Business> business_list = new ArrayList<Business>();
         try {
             JSONObject datajson = new JSONObject(json);
