@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context=".MainActivity"
-   >
+    android:background="@color/white">
 
     <TextView android:text="豆蔻电影主题餐厅" android:layout_width="fill_parent"
         android:layout_height="70dp"
