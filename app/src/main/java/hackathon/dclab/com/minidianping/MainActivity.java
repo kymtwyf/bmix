@@ -1,5 +1,6 @@
 package hackathon.dclab.com.minidianping;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -12,9 +13,14 @@ import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.baidu.location.LocationClient;
@@ -28,35 +34,55 @@ import hackathon.dclab.com.minidianping.entities.GeoInfo;
 import hackathon.dclab.com.minidianping.entities.Mode;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
     private static String TAG = "MainActivity";
-    private ImageView imgView;
-    private TextView tvLongtitude;
-    private TextView tvLatitude;
+    private TextView tvHeader;
+    private ImageView ivPreview;
+    private LinearLayout llRecommendReasons;
+    private ListView lvRecommendDishes;
+    private TextView tvAverage; // 人均消费：
+    private TextView tvRatingNumber; //评分
+    private RatingBar ratingBar; //星星
+    private ImageView ivYes;
+    private ImageView ivNo;
 
     private Handler handler;
 
-    public static final int MSG_UPDATE_TEST = 0;
+    public static final int MSG_UPDATE_PREVIEW = 0;
     private LocationClient mLocationClient = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        //Remove notification bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        imgView = (ImageView)findViewById(R.id.getImage);
-        tvLatitude = (TextView)findViewById(R.id.latitude);
-        tvLongtitude = (TextView)findViewById(R.id.longitude);
+        tvHeader = (TextView)findViewById(R.id.tvHeader);
+        ivPreview = (ImageView)findViewById(R.id.ivPreview);
+        llRecommendReasons = (LinearLayout)findViewById(R.id.lv_recommend_reasons);
+        lvRecommendDishes = (ListView)findViewById(R.id.lv_recommend_dishes);
+        tvAverage = (TextView)findViewById(R.id.tvAverage);
+        tvRatingNumber = (TextView)findViewById(R.id.tvRatingNumber);
+        ratingBar = (RatingBar)findViewById(R.id.ratingBar);
+        ivYes = (ImageView)findViewById(R.id.ivYes);
+        ivNo = (ImageView)findViewById(R.id.ivNo);
+
+
+
+        ivPreview.setScaleType(ImageView.ScaleType.FIT_XY);
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 Log.e(TAG,"HANDLING IMG");
 
                 switch (msg.what){
-                    case MSG_UPDATE_TEST:
+                    case MSG_UPDATE_PREVIEW:
                         Log.e(TAG,"SETTING IMG");
-                        imgView.setImageBitmap((Bitmap)msg.obj);
+                        ivPreview.setImageBitmap((Bitmap)msg.obj);
                         break;
                 }
                 super.handleMessage(msg);
@@ -65,10 +91,14 @@ public class MainActivity extends ActionBarActivity {
 
         (new Thread(testGetImg)).start();
 
+        //定位相关
         mLocationClient = ((DPApplication)getApplication()).mLocationClient;
         LocationClientOption option = new LocationClientOption();
         initLocationOptions(option);//设置定位参数
         mLocationClient.setLocOption(option);
+        mLocationClient.start();
+        //定位相关
+
 
         HTTPUtils http = new HTTPUtils();
         GeoInfo geo = new GeoInfo();
@@ -80,30 +110,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     Runnable testGetImg = new Runnable() {
         @Override
@@ -111,7 +117,8 @@ public class MainActivity extends ActionBarActivity {
             Bitmap bm = NetUtils.getBitmap("http://kazge.com/wp-content/themes/deskchaos/img/outer-back.jpg");
             if(bm != null) Log.e(TAG,"get image");
             else Log.e(TAG, "cant get image");
-            handler.obtainMessage(MSG_UPDATE_TEST,bm).sendToTarget();
+            handler.obtainMessage(MSG_UPDATE_PREVIEW,bm).sendToTarget();
+
         }
     };
     /**设置定位参数
@@ -132,4 +139,6 @@ public class MainActivity extends ActionBarActivity {
 
         super.onDestroy();
     }
+
+
 }

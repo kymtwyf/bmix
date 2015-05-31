@@ -13,7 +13,7 @@ import com.baidu.mapapi.SDKInitializer;
  * Created by Yongfeng on 15/5/23.
  */
 public class DPApplication extends Application {
-    private static Location location;
+    private static BDLocation location;
     public LocationClient mLocationClient = null;
     public BDLocationListener myListener = new MyLocationListener();
 
@@ -26,13 +26,35 @@ public class DPApplication extends Application {
 
     }
 
-
-    public static Location getLocation() {
+    public static BDLocation getLocation() {
         return location;
     }
 
-    public static void setLocation(Location location) {
+    public static void setLocation(BDLocation location) {
         DPApplication.location = location;
+
+        StringBuffer sb = new StringBuffer(256);
+        sb.append("time : ");
+        sb.append(location.getTime());
+        sb.append("\nerror code : ");
+        sb.append(location.getLocType());
+        sb.append("\nlatitude : ");
+        sb.append(location.getLatitude());
+        sb.append("\nlontitude : ");
+        sb.append(location.getLongitude());
+        sb.append("\nradius : ");
+        sb.append(location.getRadius());
+        if (location.getLocType() == BDLocation.TypeGpsLocation){
+            sb.append("\nspeed : ");
+            sb.append(location.getSpeed());
+            sb.append("\nsatellite : ");
+            sb.append(location.getSatelliteNumber());
+        } else if (location.getLocType() == BDLocation.TypeNetWorkLocation){
+            sb.append("\naddr : ");
+            sb.append(location.getAddrStr());
+        }
+
+        Log.e("tagtag", sb.toString());
     }
 
     public class MyLocationListener implements BDLocationListener {
@@ -40,28 +62,8 @@ public class DPApplication extends Application {
         public void onReceiveLocation(BDLocation location) {
             if (location == null)
                 return ;
-            StringBuffer sb = new StringBuffer(256);
-            sb.append("time : ");
-            sb.append(location.getTime());
-            sb.append("\nerror code : ");
-            sb.append(location.getLocType());
-            sb.append("\nlatitude : ");
-            sb.append(location.getLatitude());
-            sb.append("\nlontitude : ");
-            sb.append(location.getLongitude());
-            sb.append("\nradius : ");
-            sb.append(location.getRadius());
-            if (location.getLocType() == BDLocation.TypeGpsLocation){
-                sb.append("\nspeed : ");
-                sb.append(location.getSpeed());
-                sb.append("\nsatellite : ");
-                sb.append(location.getSatelliteNumber());
-            } else if (location.getLocType() == BDLocation.TypeNetWorkLocation){
-                sb.append("\naddr : ");
-                sb.append(location.getAddrStr());
-            }
+            DPApplication.setLocation(location);
 
-            Log.e("tagtag", sb.toString());
         }
     }
 }
