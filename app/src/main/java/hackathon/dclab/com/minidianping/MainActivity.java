@@ -1,13 +1,16 @@
 package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -40,6 +43,7 @@ public class MainActivity extends Activity {
     private RatingBar ratingBar; //星星
     private ImageView ivYes;
     private ImageView ivNo;
+    private Button button_mod;
 
     private Handler handler;
 
@@ -58,13 +62,23 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         tvHeader = (TextView)findViewById(R.id.tvHeader);
         ivPreview = (ImageView)findViewById(R.id.ivPreview);
-        llRecommendReasons = (LinearLayout)findViewById(R.id.lv_recommend_reasons);
+        //llRecommendReasons = (LinearLayout)findViewById(R.id.special_title_list);
         lvRecommendDishes = (ListView)findViewById(R.id.lv_recommend_dishes);
         tvAverage = (TextView)findViewById(R.id.tvAverage);
         tvRatingNumber = (TextView)findViewById(R.id.tvRatingNumber);
         ratingBar = (RatingBar)findViewById(R.id.ratingBar);
         ivYes = (ImageView)findViewById(R.id.ivYes);
         ivNo = (ImageView)findViewById(R.id.ivNo);
+        button_mod = (Button)findViewById(R.id.button_mod);
+        button_mod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, ModeActivity.class);
+                MainActivity.this.startActivity(intent);
+            }
+        });
+
 
 
 
@@ -111,7 +125,9 @@ public class MainActivity extends Activity {
         }
         System.out.println(json);
         List<Business> businesses = Business.getBusinessFromJson(json);
-        System.out.println(businesses);
+        for(int i=0; i<businesses.size();++i){
+            System.out.println(businesses.get(i).ToString());
+        }
     }
 
 
