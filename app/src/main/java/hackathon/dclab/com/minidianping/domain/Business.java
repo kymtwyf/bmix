@@ -27,6 +27,7 @@ public class Business {
     public long id = 0;
     public long dp_business_id = 0;
     public String name="";             //店的名称
+    public double average_cost = 0;
     public String pic_url="";
     public List<String> telephones = null;        //电话
     public String address="";          //地址
@@ -40,7 +41,7 @@ public class Business {
 
 
     public Business(long id, long dp_business_id, String name, String pic_url, List<String> telephones, String address, double latitude, double longitude
-                    , int distance,double recommend_mark, List<String> recommend_reason, List<Dish> favourite_dishes, GroupOn groupon){
+                    , int distance,double recommend_mark, List<String> recommend_reason, List<Dish> favourite_dishes, GroupOn groupon, double average_cost){
         this.id = id;
         this.dp_business_id = dp_business_id;
         this.name = name;
@@ -54,19 +55,13 @@ public class Business {
         this.recommend_reason = recommend_reason;
         this.favourite_dishes = favourite_dishes;
         this.groupon = groupon;
+        this.average_cost = average_cost;
     }
 
     public String ToString(){
         StringBuilder sb = new StringBuilder();
-        sb.append("id: ");
-        sb.append(id);
-        sb.append('\n');
-        sb.append("dp_business_id: ");
-        sb.append(dp_business_id);
-        sb.append('\n');
-        sb.append("name");
-        sb.append(name);
-        sb.append('\n');
+        sb.append("average_cost: ");
+        sb.append(average_cost);
         return sb.toString();
     }
 
@@ -121,8 +116,10 @@ public class Business {
                 //团购
                 JSONObject grouponjson = temp.getJSONObject("groupon");
                 GroupOn groupon = new GroupOn(grouponjson.getString("type"),grouponjson.getString("name"),grouponjson.getInt("price"),grouponjson.getString("url"));
+                //人均
+                double average_cost = temp.getDouble("average_cost");
                 business_list.add(new Business(id,business_id,name,pic_url,telephones,address,latitude,longitude,distance,
-                        recommend_mark,recommend_reason,favouriate_dishes,groupon));
+                        recommend_mark,recommend_reason,favouriate_dishes,groupon,average_cost));
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -9,7 +9,7 @@ import android.widget.RadioButton;
 
 
 public class ModeActivity extends Activity {
-    private Button ok = null;
+    private Button bok = null;
     private RadioButton singleperson = null;
     private RadioButton doubleperson = null;
     private RadioButton multiperson = null;
@@ -27,7 +27,7 @@ public class ModeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mode);
-        ok = (Button)findViewById(R.id.button_mode_ok);
+        bok = (Button)findViewById(R.id.button_mode_ok);
         singleperson = (RadioButton)findViewById(R.id.radio_singleperson);
         doubleperson = (RadioButton)findViewById(R.id.radio_doubleperson);
         multiperson = (RadioButton)findViewById(R.id.radio_multiperson);
@@ -39,13 +39,13 @@ public class ModeActivity extends Activity {
         dongnanya = (CheckBox)findViewById(R.id.checkbox_dongnanya);
         dongbei = (CheckBox)findViewById(R.id.checkbox_dongbei);
         huoguo = (CheckBox)findViewById(R.id.checkbox_huoguo);
-        xican = (CheckBox)findViewById(R.id.checkbox_huoguo);
+        xican = (CheckBox)findViewById(R.id.checkbox_xican);
         cafe = (CheckBox)findViewById(R.id.checkbox_cafe);
 
-        ok.setOnClickListener(new View.OnClickListener() {
+        bok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+
             }
         });
     }
