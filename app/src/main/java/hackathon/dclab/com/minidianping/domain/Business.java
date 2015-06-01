@@ -27,13 +27,13 @@ public class Business {
     public long id = 0;
     public long dp_business_id = 0;
     public String name="";             //店的名称
-    public double average_cost = 0;
     public String pic_url="";
     public List<String> telephones = null;        //电话
     public String address="";          //地址
     public double latitude=0;          //纬度
     public double longitude = 0;       //经度
     public int distance = 0;           //距离
+    public int average_cost = 80;    //人均消费
     public double recommend_mark = 8.5;
     public List<String> recommend_reason = null;
     public List<Dish>  favourite_dishes = null;
@@ -41,7 +41,7 @@ public class Business {
 
 
     public Business(long id, long dp_business_id, String name, String pic_url, List<String> telephones, String address, double latitude, double longitude
-                    , int distance,double recommend_mark, List<String> recommend_reason, List<Dish> favourite_dishes, GroupOn groupon, double average_cost){
+                    , int distance,int average_cost,double recommend_mark, List<String> recommend_reason, List<Dish> favourite_dishes, GroupOn groupon){
         this.id = id;
         this.dp_business_id = dp_business_id;
         this.name = name;
@@ -51,6 +51,7 @@ public class Business {
         this.latitude = latitude;
         this.longitude = longitude;
         this.distance = distance;
+        this.average_cost = average_cost;
         this.recommend_mark = recommend_mark;
         this.recommend_reason = recommend_reason;
         this.favourite_dishes = favourite_dishes;
@@ -96,6 +97,8 @@ public class Business {
                 double longitude = temp.getDouble("longitude");
                 //距离
                 int distance = temp.getInt("distance");
+                //人均消费
+                int average_cost = temp.getInt("average_cost");
                 //推荐理由
                 double recommend_mark = temp.getDouble("recommend_mark");
                 JSONArray reason = temp.getJSONArray("recommend_reason");
@@ -116,10 +119,8 @@ public class Business {
                 //团购
                 JSONObject grouponjson = temp.getJSONObject("groupon");
                 GroupOn groupon = new GroupOn(grouponjson.getString("type"),grouponjson.getString("name"),grouponjson.getInt("price"),grouponjson.getString("url"));
-                //人均
-                double average_cost = temp.getDouble("average_cost");
-                business_list.add(new Business(id,business_id,name,pic_url,telephones,address,latitude,longitude,distance,
-                        recommend_mark,recommend_reason,favouriate_dishes,groupon,average_cost));
+                business_list.add(new Business(id,business_id,name,pic_url,telephones,address,latitude,longitude,distance,average_cost,
+                        recommend_mark,recommend_reason,favouriate_dishes,groupon));
             }
         } catch (JSONException e) {
             e.printStackTrace();

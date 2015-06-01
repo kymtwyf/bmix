@@ -5,12 +5,12 @@
     android:background="@color/white">
 
     <TextView android:text="豆蔻电影主题餐厅" android:layout_width="fill_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:id="@+id/tvHeader"
-        android:background="@drawable/top"
+        android:background="@color/white"
         android:textSize="22dp"
         android:gravity="center_vertical|center_horizontal"
-        android:textColor="@color/white"
+        android:textColor="@color/color_header_text"
         android:paddingBottom="20dp"
         android:paddingTop="20dp" />
 
@@ -23,49 +23,96 @@
 
     <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="45dp"
-        android:id="@+id/special_title"
-        android:layout_below="@+id/ivPreview"
-        android:background="@drawable/special_title"
-        android:padding="10dp" />
+        android:layout_height="2dp"
+        android:id="@+id/iv_splitter"
+        android:layout_centerHorizontal="true"
+        android:background="@color/color_splitter_red"
+        android:layout_below="@+id/ivPreview" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="45dp"
-        android:id="@+id/special_title_list"
-        android:layout_below="@+id/special_title">
+        android:layout_height="wrap_content"
+        android:id="@+id/discount_wrapper"
+        android:layout_above="@+id/iv_splitter">
+
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-            <TextView
-                android:layout_width="75dp"
-                android:layout_height="27dp"
-                android:text="新式菜品"
-                android:id="@+id/textView4"
-                android:layout_marginLeft="165dp"
-                android:layout_gravity="center"
-                android:background="@drawable/special_bg"
-                android:padding="2dp"
-                android:textStyle="bold"
-                android:gravity="center_vertical|center_horizontal" />
-        </LinearLayout>
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></LinearLayout>
     </RelativeLayout>
 
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="45dp"
-        android:id="@+id/lv_recommend_dishes_title"
-        android:layout_below="@+id/special_title_list"
-        android:paddingTop="10dp"
-        android:background="@drawable/menus_title" />
+        android:id="@+id/special_title"
+        android:layout_below="@+id/iv_splitter"
+        android:background="@drawable/special_title"
+        android:padding="10dp"
+        android:visibility="gone" />
 
-    <ListView
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="20dp"
-        android:id="@+id/lv_recommend_dishes"
-        android:layout_below="@+id/lv_recommend_dishes_title"
-        android:choiceMode="none">
-    </ListView>
+        android:layout_height="wrap_content"
+        android:id="@+id/special_title_list"
+        android:layout_below="@+id/special_title">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ll_recommend_reasons">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="新式菜品"
+                android:id="@+id/textView4"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                android:padding="2dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical|center_horizontal"
+                android:textSize="24dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="新式菜品"
+                android:id="@+id/textView"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                android:padding="2dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:textSize="24dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/special_title_list"
+        android:background="@drawable/content_bg">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:id="@+id/lv_recommend_dishes_title"
+            android:paddingTop="10dp"
+            android:layout_below="@+id/special_title_list"
+            android:src="@drawable/meal_title" />
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/lv_recommend_dishes"
+            android:layout_below="@+id/lv_recommend_dishes_title"
+            android:choiceMode="none"
+            android:listSelector="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:dividerHeight="0dp">
+        </ListView>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -103,10 +150,19 @@
                 android:textColor="@color/white"
                 android:layout_above="@+id/tvRate" />
 
+            <TextView
+                android:text="距离您：200m"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvDistance"
+                android:textColor="@color/white"
+                android:layout_above="@+id/tvRate" />
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <TextView
                     android:text="推荐指数："
@@ -157,9 +213,8 @@
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Mod"
+        android:layout_width="@dimen/header_icon_width_height"
+        android:layout_height="@dimen/header_icon_width_height"
         android:id="@+id/button_mod"
         android:height="45dp"
         android:gravity="center"
@@ -168,13 +223,14 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="false"
         android:layout_alignWithParentIfMissing="false"
-        android:layout_marginTop="10dp" />
+        android:background="@drawable/header_setmode"
+        android:layout_alignLeft="@+id/tvHeader"
+        android:layout_margin="15dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="List"
+        android:layout_width="@dimen/header_icon_width_height"
+        android:layout_height="@dimen/header_icon_width_height"
         android:id="@+id/button_list"
         android:height="45dp"
         android:gravity="center"
@@ -182,6 +238,8 @@
         android:layout_alignWithParentIfMissing="false"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp" />
+        android:background="@drawable/header_list"
+        android:layout_margin="15dp"
+        android:layout_alignRight="@+id/tvHeader" />
 
 </RelativeLayout>
