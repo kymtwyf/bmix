@@ -1,6 +1,7 @@
 package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ public class ModeActivity extends Activity {
     private int personnumber = 1;
     private int type = 1;
     private int stype=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +112,9 @@ public class ModeActivity extends Activity {
                 }
                 Mode newmode = new Mode(personnumber,type,stype);
                 MainActivity.mode = newmode;
-                ModeActivity.this.finish();
+                Intent intent = new Intent(ModeActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
     }
