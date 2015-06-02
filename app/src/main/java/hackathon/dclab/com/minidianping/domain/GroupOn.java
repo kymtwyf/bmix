@@ -1,9 +1,11 @@
 package hackathon.dclab.com.minidianping.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by weicheng on 26/5/15.
  */
-public class GroupOn {
+public class GroupOn implements Serializable{
     public GroupOn(String type,String name, int price, String url){
         this.type = type;
         this.name = name;

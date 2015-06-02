@@ -7,7 +7,7 @@
 
     <TextView android:text="豆蔻电影主题餐厅" android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/navHeader"
+        android:id="@+id/nav_header"
         android:background="@color/white"
         android:textSize="22sp"
         android:gravity="center_vertical|center_horizontal"
@@ -16,9 +16,9 @@
         android:paddingTop="20dp" />
     <RelativeLayout
         android:id="@+id/nav_groupon_container"
-        android:layout_below="@+id/navHeader"
+        android:layout_below="@+id/nav_header"
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="120dp"
         android:background="@color/gray">
         <TextView
             android:id="@+id/nav_groupon_title"
@@ -132,7 +132,7 @@
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="180dp"
         android:id="@+id/nav_map_container"
         android:layout_below="@+id/nav_address_container">
         <com.baidu.mapapi.map.MapView
@@ -165,14 +165,14 @@
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/ivYes"
+            android:id="@+id/nav_yes"
             android:layout_weight="1"
             android:background="@drawable/button1" />
 
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/ivNo"
+            android:id="@+id/nav_collect"
             android:layout_weight="1"
             android:background="@drawable/button2" />
     </LinearLayout>

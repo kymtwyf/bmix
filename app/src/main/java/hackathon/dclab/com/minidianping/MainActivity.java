@@ -227,6 +227,9 @@ public class MainActivity extends Activity {
                 case R.id.ivYes:{
                     Intent intent = new Intent();
                     intent.setClass(MainActivity.this, NavActivity.class);
+                    Bundle mbundle = new Bundle();
+                    mbundle.putSerializable("business",businesses.get(currentIndex));
+                    intent.putExtras(mbundle);
                     MainActivity.this.startActivity(intent);
                     //log 一些信息
                     break;

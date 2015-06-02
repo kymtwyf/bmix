@@ -1,20 +1,20 @@
 package hackathon.dclab.com.minidianping.domain;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by weicheng on 26/5/15.
  */
-public class Business {
-    public static class Dish{
+public class Business implements Serializable{
+    public static class Dish implements Serializable{
         public String name;
         public int price;
         public String index;
