@@ -22,6 +22,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -30,6 +31,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
@@ -120,6 +122,36 @@ public class NetUtils {
         return null;
     }
 
+    private synchronized static DefaultHttpClient getHttpClient() {
+        HttpParams params = new BasicHttpParams();
+		/* 从连接池中取连接的超时时间 */
+        ConnManagerParams.setTimeout(params, 10000);
+		/* 连接超时 */
+        HttpConnectionParams.setConnectionTimeout(params, 10000);
+		/* 请求超时 */
+        HttpConnectionParams.setSoTimeout(params, 10000);
+        // 设置我们的HttpClient支持HTTP和HTTPS两种模式
+        SchemeRegistry reg = new SchemeRegistry();
+        SSLSocketFactory sf = null;
+        ClientConnectionManager conMgr = null;
+        try {
+            KeyStore trustStore = KeyStore.getInstance(KeyStore
+                    .getDefaultType());
+            trustStore.load(null, null);
+            sf = new SSLSocketFactoryEx(trustStore);
+            sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+            reg.register(new Scheme("http", PlainSocketFactory
+                    .getSocketFactory(), 80));
+            reg.register(new Scheme("https", sf, 443));
+            // 使用线程安全的连接管理来创建HttpClient
+            conMgr = new ThreadSafeClientConnManager(params, reg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new DefaultHttpClient(conMgr, params);
+    }
+
     /**
      * post请求
      *
@@ -131,13 +163,12 @@ public class NetUtils {
                                      List<NameValuePair> params) {
 
         try {
-            // 1. 创建HttpClient对象
-            HttpClient client = getNewHttpClient();
             // 2. 发get请求创建HttpGet对象
             HttpPost postMethod = new HttpPost(urlString);
+            System.out.println(urlString);
             postMethod.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-            //HttpResponse response = client.execute(postMethod);
-            HttpResponse response = new DefaultHttpClient().execute(postMethod);
+            //HttpResponse response = new DefaultHttpClient().execute(postMethod);
+            HttpResponse response = getHttpClient().execute(postMethod);
             int statueCode = response.getStatusLine().getStatusCode();
             if (statueCode == 200) {
                 System.out.println(statueCode);
@@ -154,9 +185,9 @@ public class NetUtils {
     public static Bitmap getBitmap(String imgUrl) {
         Bitmap bm = null;
         try {
-            HttpClient client = getNewHttpClient();
             HttpGet getMethod = new HttpGet(imgUrl);
-            HttpResponse response = client.execute(getMethod);
+
+            HttpResponse response = getHttpClient().execute(getMethod);
             int statueCode = response.getStatusLine().getStatusCode();
             if(statueCode == 200) {
                 System.out.print(statueCode);

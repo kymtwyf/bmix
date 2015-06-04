@@ -4,9 +4,14 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +30,7 @@ import android.widget.TextView;
 
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -58,6 +64,7 @@ public class MainActivity extends Activity {
     private MyOnClickListener listener;
 
     private Handler handler;
+    private Handler vihandler;//摇一摇的handler
 
     public static final int MSG_UPDATE_PREVIEW = 0;
     public static final int MSG_RENDER_VIEW = 1;
@@ -69,6 +76,11 @@ public class MainActivity extends Activity {
     private int currentIndex = 0;
 
     public static Mode mode = null;
+
+    private SensorManager sensorManager; //用来检测摇一摇
+    private Vibrator vibrator; //用来检测摇一摇
+    private static final int SENSOR_SHAKE = 10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Remove title bar
@@ -111,15 +123,20 @@ public class MainActivity extends Activity {
         handler = new ViewUpdateHandler();
 
         //定位相关
+        SDKInitializer.initialize(getApplicationContext());
         mLocationClient = ((DPApplication)getApplication()).mLocationClient;
         LocationClientOption option = new LocationClientOption();
         initLocationOptions(option);//设置定位参数
         mLocationClient.setLocOption(option);
         mLocationClient.start();
-        //定位相关
+        mLocationClient.requestLocation();
 
+        //摇一摇相关
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vihandler = new MyShakeHandler();
 
-        //HttpGetRecommend http = new HttpGetRecommend();
+        //取得第一次的请求
         GeoInfo geo = new GeoInfo("China","Shanghai","Minhang",0,0);
         Mode mode = new Mode(2,1,0x000000);
         Gson gs = new Gson();
@@ -133,7 +150,7 @@ public class MainActivity extends Activity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        System.out.println(json);
+        //System.out.println(json);
         businesses = Business.getBusinessFromJson(json);
         for(int i=0; i<businesses.size();++i){
             System.out.println(businesses.get(i).ToString());
@@ -149,6 +166,7 @@ public class MainActivity extends Activity {
     private void renderBusiness(){
         Log.e("rendering ","view");
         if(businesses == null || currentIndex>=businesses.size()){
+            currentIndex--;
             Log.e("出错了","到最后一个了，或者 business为null");
             return;
         }
@@ -266,5 +284,59 @@ public class MainActivity extends Activity {
             super.handleMessage(msg);
         }
     };
+
+    /**
+     * 重力感应监听
+     */
+    private SensorEventListener sensorEventListener = new SensorEventListener() {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // 传感器信息改变时执行该方法
+            float[] values = event.values;
+            float x = values[0]; // x轴方向的重力加速度，向右为正
+            float y = values[1]; // y轴方向的重力加速度，向前为正
+            float z = values[2]; // z轴方向的重力加速度，向上为正
+            int medumValue = 13;// 多次调试，设置到13
+            if (Math.abs(x) > medumValue || Math.abs(y) > medumValue || Math.abs(z) > medumValue) {
+                vibrator.vibrate(200);
+                Message msg = new Message();
+                msg.what = SENSOR_SHAKE;
+                vihandler.sendMessage(msg);
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
+
+    /**
+     * 动作执行
+     */
+    private class MyShakeHandler extends Handler{
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case SENSOR_SHAKE:
+                    Log.i(TAG, "检测到摇晃，执行操作！");
+                    ivYes.performClick();
+                    sensorManager.unregisterListener(sensorEventListener);
+                    break;
+            }
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sensorManager != null) {// 注册监听器
+            sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+            // 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
+        }
+    }
 
 }
