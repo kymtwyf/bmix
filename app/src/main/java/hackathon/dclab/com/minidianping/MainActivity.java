@@ -1,6 +1,5 @@
 package hackathon.dclab.com.minidianping;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,38 +7,51 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.google.gson.Gson;
 
+import org.apache.http.util.EncodingUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import hackathon.dclab.com.minidianping.domain.Business;
 import hackathon.dclab.com.minidianping.entities.GeoInfo;
@@ -80,17 +92,28 @@ public class MainActivity extends Activity {
     private SensorManager sensorManager; //用来检测摇一摇
     private Vibrator vibrator; //用来检测摇一摇
     private static final int SENSOR_SHAKE = 10;
+    protected static final int STOP = 0x10000;
+    protected static final int NEXT = 0x10001;
+
+    private ProgressBar circleProgress;
+    private int iCount = 0;
+    private boolean flag = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         //Remove notification bar
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        circleProgress = (ProgressBar)findViewById(R.id.iv_progress);
+        circleProgress.setIndeterminate(false);
+        circleProgress.setVisibility(View.VISIBLE);
+        circleProgress.setProgress(0);
+        mThread.start();
         tvHeader = (TextView)findViewById(R.id.tvHeader);
         tvDistance = (TextView)findViewById(R.id.tvDistance);
         ivPreview = (ImageView)findViewById(R.id.ivPreview);
@@ -105,14 +128,7 @@ public class MainActivity extends Activity {
         ivYes.setOnClickListener(listener);
         ivNo.setOnClickListener(listener);
         button_mod = (Button)findViewById(R.id.button_mod);
-        button_mod.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, ModeActivity.class);
-                MainActivity.this.startActivity(intent);
-            }
-        });
+        button_mod.setOnClickListener(listener);
         dishContent = new ArrayList<HashMap<String,String>>();
         dishAdapter = new SimpleAdapter(this,dishContent,R.layout.recommend_dish_item
                 ,new String[]{"tv_dish_name","tv_dish_price"}
@@ -137,20 +153,37 @@ public class MainActivity extends Activity {
         vihandler = new MyShakeHandler();
 
         //取得第一次的请求
+        BDLocation location = DPApplication.getLocation();
+        //GeoInfo geo = new GeoInfo("中国",location.getCity(),location.getDistrict(),location.getLatitude(),location.getLongitude());
         GeoInfo geo = new GeoInfo("China","Shanghai","Minhang",0,0);
-        Mode mode = new Mode(2,1,0x000000);
+        File file = new File("/data/data/hackathon.dclab.com.minidianping/files/mode.xml");
+        Mode mode = null;
+        if(!file.exists()) {
+             mode= new Mode(2, 1, 0x000000);
+             writeFile("mode.xml",mode);
+        }
+        mode = readFromXML("mode.xml");
+        //Mode mode = readFromXML("mode.xml");
         Gson gs = new Gson();
         HttpGetRecommend getRecommend = new HttpGetRecommend("123456",geo,mode);
-        ExecutorService exs= Executors.newCachedThreadPool();
-        String json = null;
+        String json = "";
+        getRecommend.start();
         try {
-            json = exs.submit(getRecommend).get();
+            getRecommend.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         }
-        //System.out.println(json);
+        json = getRecommend.getResult();
+        if (json == ""){
+            getRecommend = new HttpGetRecommend("123456",geo,mode);
+            getRecommend.start();
+            try {
+                getRecommend.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            json = getRecommend.getResult();
+        }
         businesses = Business.getBusinessFromJson(json);
         for(int i=0; i<businesses.size();++i){
             System.out.println(businesses.get(i).ToString());
@@ -160,6 +193,7 @@ public class MainActivity extends Activity {
         //开启线程取图片
         (new Thread(testGetImg)).start();
         renderBusiness();
+        getRecommend.interrupt();
     }
 
 
@@ -225,7 +259,7 @@ public class MainActivity extends Activity {
     private void initLocationOptions(LocationClientOption option) {
         option.setOpenGps(true);//打开gps
         option.setCoorType("bd09ll");//设置坐标类型Baidu encoded latitude & longtitude
-        option.setScanSpan(1000 * 60 * 5);//扫描间隔5min
+        option.setScanSpan(1000*10);//扫描间隔10s
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);//GPS + Network locating
         option.setAddrType("all");//locating results include all address infos
         option.setIsNeedAddress(true);//include address infos
@@ -238,26 +272,33 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
     private class MyOnClickListener implements View.OnClickListener{
-
         @Override
         public void onClick(View view) {
+            if(!flag)
+                return;
             switch (view.getId()) {
-                case R.id.ivYes:{
+                case R.id.ivYes: {
                     Intent intent = new Intent();
                     intent.setClass(MainActivity.this, NavActivity.class);
                     Bundle mbundle = new Bundle();
-                    mbundle.putSerializable("business",businesses.get(currentIndex));
+                    mbundle.putSerializable("business", businesses.get(currentIndex));
                     intent.putExtras(mbundle);
                     MainActivity.this.startActivity(intent);
-                    //log 一些信息
+                    break;
+                }
+                case R.id.button_mod:{
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, ModeActivity.class);
+                    MainActivity.this.startActivity(intent);
+                    MainActivity.this.finish();
                     break;
                 }
                 case R.id.ivNo:{
+                    currentIndex++;
+                    handler.sendEmptyMessage(MSG_RENDER_VIEW);
                     break;
                 }
             }
-            currentIndex++;
-            handler.sendEmptyMessage(MSG_RENDER_VIEW);
         }
     }
     private class ViewUpdateHandler extends Handler{
@@ -292,6 +333,8 @@ public class MainActivity extends Activity {
 
         @Override
         public void onSensorChanged(SensorEvent event) {
+            if(!flag)
+                return;
             // 传感器信息改变时执行该方法
             float[] values = event.values;
             float x = values[0]; // x轴方向的重力加速度，向右为正
@@ -339,4 +382,92 @@ public class MainActivity extends Activity {
         }
     }
 
+    private Handler mHandler = new Handler(){
+        public void handleMessage(Message msg){
+            switch (msg.what) {
+                case STOP:
+                    circleProgress.setVisibility(View.GONE);
+                    Thread.currentThread().interrupt();
+                    break;
+                case NEXT:
+                    if(!Thread.currentThread().isInterrupted()){
+                        circleProgress.setProgress(iCount);
+                    }
+                    break;
+            }
+        }
+    };
+
+    private Thread mThread = new Thread(new Runnable() {
+
+        public void run() {
+            iCount = 0;
+            flag = false;
+            for(int i=0 ; i < 20; i++){
+                try{
+                    iCount = (i + 1) * 5;
+                    Thread.sleep(200);
+                    if(i == 19){
+                        Message msg = new Message();
+                        msg.what = STOP;
+                        mHandler.sendMessage(msg);
+                        flag = true;
+                        break;
+                    }else{
+                        Message msg = new Message();
+                        msg.what = NEXT;
+                        mHandler.sendMessage(msg);
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    });
+
+    private Mode readFromXML(String file){
+        System.out.println("Read from String");
+        String res="";
+        try{
+            FileInputStream fin = openFileInput(file);
+            int length = fin.available();
+            byte [] buffer = new byte[length];
+            fin.read(buffer);
+            res = EncodingUtils.getString(buffer, "UTF-8");
+            fin.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        System.out.println(res);
+        String[] list = res.split(",");
+        int number = Integer.parseInt(list[0]);
+        int type = Integer.parseInt(list[1]);
+        int stype = Integer.parseInt(list[2]);
+        return new Mode(number,type,stype);
+    }
+
+
+    public void writeFile(String fileName,Mode mode){
+        System.out.println("Write To File");
+        try{
+            FileOutputStream fout =openFileOutput(fileName, MODE_PRIVATE);
+
+            int number = mode.number;
+            int type = mode.type;
+            int stype = mode.stype;
+
+            String str = number+","+type+","+stype;
+
+            fout.write(str.getBytes());
+
+            fout.close();
+        }
+
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
 }

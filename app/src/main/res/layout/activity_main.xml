@@ -242,4 +242,13 @@
         android:layout_margin="15dp"
         android:layout_alignRight="@+id/tvHeader" />
 
+    <ProgressBar android:id="@+id/iv_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        style="?android:attr/progressBarStyleLarge"
+        android:visibility="visible"/>
+
+
 </RelativeLayout>

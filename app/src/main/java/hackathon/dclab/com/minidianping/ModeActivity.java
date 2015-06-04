@@ -115,6 +115,7 @@ public class ModeActivity extends Activity {
                 Intent intent = new Intent(ModeActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                ModeActivity.this.finish();
             }
         });
     }

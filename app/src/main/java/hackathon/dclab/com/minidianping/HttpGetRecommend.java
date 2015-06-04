@@ -19,7 +19,7 @@ import hackathon.dclab.com.minidianping.entities.Mode;
 /**
  * Created by weicheng on 30/5/15.
  */
-public class HttpGetRecommend implements Callable<String>{
+public class HttpGetRecommend extends Thread{
     String action="http://pybackend.mybluemix.net/find_businesses";
     HttpPost httpRequest=null;
     List<NameValuePair> params=null;
@@ -42,8 +42,11 @@ public class HttpGetRecommend implements Callable<String>{
         params.add(new BasicNameValuePair(key,value));
     }
 
-    @Override
-    public String call() throws Exception {
+    public String getResult(){
+        return this.strResult;
+    }
+
+    public void run(){
         Gson gs = new Gson();
         setParams("user_id",userid);
         setParams("geo_info",gs.toJson(geo));
@@ -56,6 +59,6 @@ public class HttpGetRecommend implements Callable<String>{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return strResult;
+        return;
     }
 }

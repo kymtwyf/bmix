@@ -2,9 +2,16 @@ package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +50,15 @@ public class NavActivity extends Activity{
     private ImageView collect = null;
     private ImageView tele_btn = null;
     private TextView tele_text = null;
+    private MyOnClickListener listener = null;
+
+    private SensorManager sensorManager; //用来检测摇一摇
+    private Vibrator vibrator; //用来检测摇一摇
+    private static final int SENSOR_SHAKE = 10;
+    private Handler vihandler;//摇一摇的handler
+    protected static final int STOP = 0x10000;
+    protected static final int NEXT = 0x10001;
+
     @Override
     protected void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
@@ -56,6 +72,7 @@ public class NavActivity extends Activity{
         collect = (ImageView)findViewById(R.id.nav_collect);
         tele_btn = (ImageView)findViewById(R.id.nav_tel_btn);
         tele_text = (TextView)findViewById(R.id.nav_tel_context);
+        listener = new MyOnClickListener();
 
         //更新餐厅名字
         business_title.setText(business.name);
@@ -66,6 +83,12 @@ public class NavActivity extends Activity{
 
         //更新地图
         LatLng point = new LatLng(business.latitude, business.longitude);
+
+        //摇一摇相关
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vihandler = new MyShakeHandler();
+
         BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_marka);
         OverlayOptions option = new MarkerOptions().position(point).icon(bitmap);
         map = mapView.getMap();
@@ -73,37 +96,102 @@ public class NavActivity extends Activity{
         mapStatus = new MapStatus.Builder().target(point).zoom(16).build();
         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mapStatus);
         map.setMapStatus(mapStatusUpdate);
-
-        final BDLocation cirloc = DPApplication.getLocation();
-
-        yes.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Intent intent = null;
-                double srclat = cirloc.getLatitude(), srclong = cirloc.getLongitude();
-                double deslat = business.latitude, deslong = business.longitude;
-                String city = cirloc.getCity();
-                try {
-                    intent = Intent.getIntent("intent://map/direction?" +
-                            "origin=latlng:" + srclat +","+ srclong + "|name:我的位置"+
-                            "&destination=latlng:" + deslat +","+ deslong +"|name:要去的地方"+
-                            "&mode=driving"+
-                            "&region="+city+
-                            "&referer=SJTU|MiniDianping#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end");
-                    startActivity(intent); //启动调用
-                } catch (URISyntaxException e) {
-                    Log.e("intent", e.getMessage());
-                }
-            }
-        });
-
-        tele_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+tele_text.getText()));
-                NavActivity.this.startActivity(intent);
-            }
-        });
+        yes.setOnClickListener(listener);
+        tele_btn.setOnClickListener(listener);
     }
+
+    private class MyOnClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.nav_tel_btn: {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+tele_text.getText()));
+                    NavActivity.this.startActivity(intent);
+                    break;
+                }
+                case R.id.nav_yes:{
+                    BDLocation cirloc = DPApplication.getLocation();
+                    Intent intent = null;
+                    double srclat = cirloc.getLatitude(), srclong = cirloc.getLongitude();
+                    double deslat = business.latitude, deslong = business.longitude;
+                    String city = cirloc.getCity();
+                    try {
+                        intent = Intent.getIntent("intent://map/direction?" +
+                                "origin=latlng:" + srclat +","+ srclong + "|name:我的位置"+
+                                "&destination=latlng:" + deslat +","+ deslong +"|name:要去的地方"+
+                                "&mode=driving"+
+                                "&region="+city+
+                                "&referer=SJTU|MiniDianping#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end");
+                        startActivity(intent); //启动调用
+                    } catch (URISyntaxException e) {
+                        Log.e("intent", e.getMessage());
+                    }
+                    break;
+                }
+
+            }
+        }
+    }
+
+    /**
+     * 动作执行
+     */
+    private class MyShakeHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case SENSOR_SHAKE:
+                    Log.i("NAV", "检测到摇晃，执行操作！");
+                    sensorManager.unregisterListener(sensorEventListener);
+                    yes.performClick();
+                    break;
+            }
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sensorManager != null) {// 注册监听器
+            sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+            // 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
+        }
+    }
+
+    @Override
+    protected void onDestroy(){
+        if (sensorManager != null) {// 注册监听器
+            sensorManager.unregisterListener(sensorEventListener);
+        }
+        super.onDestroy();
+    }
+
+    /**
+     * 重力感应监听
+     */
+    private SensorEventListener sensorEventListener = new SensorEventListener() {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // 传感器信息改变时执行该方法
+            float[] values = event.values;
+            float x = values[0]; // x轴方向的重力加速度，向右为正
+            float y = values[1]; // y轴方向的重力加速度，向前为正
+            float z = values[2]; // z轴方向的重力加速度，向上为正
+            int medumValue = 13;// 多次调试，设置到13
+            if (Math.abs(x) > medumValue || Math.abs(y) > medumValue || Math.abs(z) > medumValue) {
+                vibrator.vibrate(200);
+                Message msg = new Message();
+                msg.what = SENSOR_SHAKE;
+                vihandler.sendMessage(msg);
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 }

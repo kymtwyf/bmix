@@ -23,7 +23,6 @@ public class DPApplication extends Application {
         SDKInitializer.initialize(this);
         mLocationClient = new LocationClient(getApplicationContext());     //声明LocationClient类
         mLocationClient.registerLocationListener( myListener );    //注册监听函数
-
     }
 
     public static BDLocation getLocation() {
@@ -63,7 +62,6 @@ public class DPApplication extends Application {
             if (location == null)
                 return ;
             DPApplication.setLocation(location);
-
         }
     }
 }
