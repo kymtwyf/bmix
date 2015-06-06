@@ -26,42 +26,21 @@
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:background="@color/color_splitter_red">
-        <TextView
-            android:id="@+id/nav_groupon_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="团购"
-            android:textColor="@color/white"
-            android:typeface="monospace"
-            android:textSize="30sp"
-            android:layout_centerHorizontal="true"
-            />
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/nav_groupon_title"
-            android:layout_marginTop="20dp">
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true">
             <TextView
-                android:id="@+id/nav_groupon_context_dp_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/nav_groupon_context"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="大众点评: "
                 android:textColor="@color/white"
                 android:textSize="25sp"
                 android:layout_weight="1"
-                />
-            <TextView
-                android:id="@+id/nav_groupon_context_dp_context"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_toRightOf="@+id/nav_groupon_context_dp_title"
-                android:text="78抵100元"
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                android:layout_weight="1"
+                android:maxLines="3"
+                android:scrollbars="vertical"
                 />
         </LinearLayout>
     </RelativeLayout>

@@ -9,7 +9,7 @@
         android:layout_gravity="start|top">
         <TextView
             android:layout_width="fill_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="筛选"
             android:background="@color/white"
             android:textColor="@color/black"
@@ -61,16 +61,14 @@
                     android:layout_height="match_parent"
                     android:id="@+id/radio_guessyoulike"
                     android:layout_weight="1"
-                    android:background="@drawable/eval_sp1"
-                    android:button="@null"/>
+                    android:background="@drawable/eval_sp1"/>
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:id="@+id/radio_tryfresh"
                     android:layout_weight="1"
-                    android:background="@drawable/eval_sp2"
-                    android:button="@null"/>
+                    android:background="@drawable/eval_sp2"/>
         </RadioGroup>
 
              <LinearLayout
@@ -88,7 +86,7 @@
 
                  <CheckBox
                      android:layout_width="wrap_content"
-                     android:layout_height="fill_parent"
+                     android:layout_height="match_parent"
                      android:id="@+id/checkbox_yuecai"
                      android:layout_weight="1"
                      android:background="@drawable/eval_sp4"
@@ -119,36 +117,32 @@
                  <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
-                     android:text="东北"
                      android:id="@+id/checkbox_dongbei"
                      android:layout_weight="1"
-                     android:background="#ffd869ff"
+                     android:background="@drawable/eval_sp9"
                      android:button="@null"/>
 
                  <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="fill_parent"
-                     android:text="火锅"
                      android:id="@+id/checkbox_huoguo"
                      android:layout_weight="1"
-                     android:background="#ffd869ff"
+                     android:background="@drawable/eval_sp7"
                      android:button="@null"/>
                  <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
-                     android:text="西餐"
                      android:id="@+id/checkbox_xican"
                      android:layout_weight="1"
-                     android:background="#ffd869ff"
+                     android:background="@drawable/eval_sp8"
                      android:button="@null"/>
 
                  <CheckBox
                      android:layout_width="wrap_content"
                      android:layout_height="fill_parent"
-                     android:text="咖啡厅"
                      android:id="@+id/checkbox_cafe"
                      android:layout_weight="1"
-                     android:background="#ffd869ff"
+                     android:background="@drawable/eval_sp10"
                      android:button="@null"/>
              </LinearLayout>
 
@@ -163,8 +157,7 @@
                      android:text="其他"
                      android:id="@+id/checkbox_others"
                      android:layout_weight="1"
-                     android:background="@drawable/eval_sp11"
-                     android:button="@null"/>
+                     android:background="@drawable/eval_sp11"/>
              </LinearLayout>
 
      <Button

@@ -11,7 +11,7 @@ public class GroupOn implements Serializable{
         this.url = url;
         this.description = description;
     }
-    private String id;
-    private String url;
-    private String description;
+    public String id;
+    public String url;
+    public String description;
 }

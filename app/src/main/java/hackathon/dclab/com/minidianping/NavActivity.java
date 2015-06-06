@@ -2,6 +2,7 @@ package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -14,11 +15,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClientOption;
@@ -41,7 +47,7 @@ import hackathon.dclab.com.minidianping.domain.Business;
 /**
  * Created by weicheng on 1/6/15.
  */
-public class NavActivity extends Activity{
+public class NavActivity extends Activity implements View.OnTouchListener {
     private MapView mapView = null;
     private BaiduMap map = null;
     private MapStatus mapStatus = null;
@@ -52,6 +58,7 @@ public class NavActivity extends Activity{
     private ImageView collect = null;
     private ImageView tele_btn = null;
     private TextView tele_text = null;
+    private TextView deal_text = null;
     private MyOnClickListener listener = null;
 
     private SensorManager sensorManager; //用来检测摇一摇
@@ -62,6 +69,9 @@ public class NavActivity extends Activity{
     protected static final int NEXT = 0x10001;
     private long leaveCheckTime = 0;
     private long returnCheckTime = 0;
+
+    private GestureDetector mGestureDetector;
+    private int currentDealIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstance){
@@ -76,6 +86,22 @@ public class NavActivity extends Activity{
         collect = (ImageView)findViewById(R.id.nav_collect);
         tele_btn = (ImageView)findViewById(R.id.nav_tel_btn);
         tele_text = (TextView)findViewById(R.id.nav_tel_context);
+        deal_text = (TextView)findViewById(R.id.nav_groupon_context);
+        if(business.groupon.size() > currentDealIndex) {
+            deal_text.setText(business.groupon.get(currentDealIndex).description);
+            deal_text.setMovementMethod(ScrollingMovementMethod.getInstance());
+            /*deal_text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Uri uri = Uri.parse(business.groupon.get(0).url);
+                    Intent it = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(it);
+                }
+            });*/
+        }
+        else{
+            deal_text.setText("暂无团购");
+        }
         listener = new MyOnClickListener();
 
         //更新餐厅名字
@@ -102,6 +128,13 @@ public class NavActivity extends Activity{
         map.setMapStatus(mapStatusUpdate);
         yes.setOnClickListener(listener);
         tele_btn.setOnClickListener(listener);
+        mGestureDetector = new GestureDetector(this, new MyGestureListener(this));
+        deal_text.setOnTouchListener(this);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        return mGestureDetector.onTouchEvent(motionEvent);
     }
 
     private class MyOnClickListener implements View.OnClickListener{
@@ -220,4 +253,78 @@ public class NavActivity extends Activity{
 
         }
     };
+
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private Context mContext;
+        MyGestureListener(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        //按下触摸屏按下时立刻触发
+        public boolean onDown(MotionEvent e) {
+            //Toast.makeText(mContext, "按下 " + e.getAction(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // 短按，触摸屏按下片刻后抬起，会触发这个手势，如果迅速抬起则不会
+        @Override
+        public void onShowPress(MotionEvent e) {
+            //Toast.makeText(mContext, "短按 " + e.getAction(), Toast.LENGTH_SHORT).show();
+        }
+        //释放，手指离开触摸屏时触发(长按、滚动、滑动时，不会触发这个手势)
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            //Toast.makeText(mContext, "释放" + e.getAction(), Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        // 滑动，按下后滑动
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                                float distanceX, float distanceY) {
+            //Toast.makeText(mContext, "滑动 " + e1.getX() + " "+e2.getX(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // 长按，触摸屏按下后既不抬起也不移动，过一段时间后触发
+        @Override
+        public void onLongPress(MotionEvent e) {
+            //Toast.makeText(mContext, "长按 " + e.getAction(), Toast.LENGTH_SHORT).show();
+        }
+        // 滑动，触摸屏按下后快速移动并抬起，会先触发滚动手势，跟着触发一个滑动手势
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                               float velocityY) {
+            //Toast.makeText(mContext, "快速滑动并抬起 " + e1.getX() + " " + e2.getX(), Toast.LENGTH_SHORT).show();
+            if(e1.getX()-e2.getX() > 400) { //向左滑动
+                if(business.groupon.size()>currentDealIndex+1)
+                    deal_text.setText(business.groupon.get(++currentDealIndex).description);
+            }
+            else{
+                if(currentDealIndex > 0)
+                    deal_text.setText(business.groupon.get(--currentDealIndex).description);
+            }
+            return false;
+        }
+        // 双击，手指在触摸屏上迅速点击第二下时触发
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            Toast.makeText(mContext, "双击 " + e.getAction(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // 双击后按下跟抬起各触发一次
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            //Toast.makeText(mContext, "双击和抬起都触发 " + e.getAction(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // 单击
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            //Toast.makeText(mContext, "单击 " + e.getAction(), Toast.LENGTH_SHORT).show();
+            Uri uri = Uri.parse(business.groupon.get(currentDealIndex).url);
+            Intent it = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(it);
+            return false;
+        }
+    }
 }

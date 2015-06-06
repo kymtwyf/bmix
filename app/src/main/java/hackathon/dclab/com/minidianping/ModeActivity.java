@@ -2,6 +2,7 @@ package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -52,11 +53,127 @@ public class ModeActivity extends Activity {
         others = (CheckBox)findViewById(R.id.checkbox_others);
         if(MainActivity.mode==null) {
             doubleperson.setChecked(true);
+            doubleperson.setBackgroundResource(R.drawable.eval_icon1_on);
             guessyoulike.setChecked(true);
         }
         else{
             setButton(MainActivity.mode);
         }
+
+        singleperson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                singleperson.setBackgroundResource(R.drawable.eval_icon2_on);
+                doubleperson.setBackgroundResource(R.drawable.eval_icon1);
+                multiperson.setBackgroundResource(R.drawable.eval_icon3);
+            }
+        });
+
+        doubleperson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                singleperson.setBackgroundResource(R.drawable.eval_icon2);
+                doubleperson.setBackgroundResource(R.drawable.eval_icon1_on);
+                multiperson.setBackgroundResource(R.drawable.eval_icon3);
+            }
+        });
+
+        multiperson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                singleperson.setBackgroundResource(R.drawable.eval_icon2);
+                doubleperson.setBackgroundResource(R.drawable.eval_icon1);
+                multiperson.setBackgroundResource(R.drawable.eval_icon3_on);
+            }
+        });
+
+        chuancai.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (chuancai.isChecked()){
+                    chuancai.setBackgroundResource(R.drawable.eval_sp3_on);
+                }else{
+                    chuancai.setBackgroundResource(R.drawable.eval_sp3);
+                }
+            }
+        });
+
+        yuecai.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (yuecai.isChecked()){
+                    yuecai.setBackgroundResource(R.drawable.eval_sp4_on);
+                }else{
+                    yuecai.setBackgroundResource(R.drawable.eval_sp4);
+                }
+            }
+        });
+
+        xibei.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (xibei.isChecked()){
+                    xibei.setBackgroundResource(R.drawable.eval_sp6_on);
+                }else{
+                    xibei.setBackgroundResource(R.drawable.eval_sp6);
+                }
+            }
+        });
+
+        dongnanya.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (dongnanya.isChecked()){
+                    dongnanya.setBackgroundResource(R.drawable.eval_sp5_on);
+                }else{
+                    dongnanya.setBackgroundResource(R.drawable.eval_sp5);
+                }
+            }
+        });
+
+        dongbei.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (dongbei.isChecked()){
+                    dongbei.setBackgroundResource(R.drawable.eval_sp9_on);
+                }else{
+                    dongbei.setBackgroundResource(R.drawable.eval_sp9);
+                }
+            }
+        });
+
+        huoguo.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (huoguo.isChecked()){
+                    huoguo.setBackgroundResource(R.drawable.eval_sp7_on);
+                }else{
+                    huoguo.setBackgroundResource(R.drawable.eval_sp7);
+                }
+            }
+        });
+
+        xican.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (xican.isChecked()){
+                    xican.setBackgroundResource(R.drawable.eval_sp8_on);
+                }else{
+                    xican.setBackgroundResource(R.drawable.eval_sp8);
+                }
+            }
+        });
+
+        cafe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (cafe.isChecked()) {
+                    cafe.setBackgroundResource(R.drawable.eval_sp10_on);
+                } else {
+                    cafe.setBackgroundResource(R.drawable.eval_sp10);
+                }
+            }
+        });
 
         bok.setOnClickListener(new View.OnClickListener() {
             @Override
