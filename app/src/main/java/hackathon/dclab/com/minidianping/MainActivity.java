@@ -60,6 +60,7 @@ import hackathon.dclab.com.minidianping.entities.Mode;
 
 public class MainActivity extends Activity {
     private static String TAG = "MainActivity";
+    public static final int INTENT_TO_LIST = 999;
     private TextView tvHeader;
     private TextView tvDistance;
     private ImageView ivPreview;
@@ -73,6 +74,7 @@ public class MainActivity extends Activity {
     private ImageView ivYes;
     private ImageView ivNo;
     private Button button_mod;
+    private Button button_list;
     private MyOnClickListener listener;
 
     private Handler handler;
@@ -130,7 +132,9 @@ public class MainActivity extends Activity {
         ivYes.setOnClickListener(listener);
         ivNo.setOnClickListener(listener);
         button_mod = (Button)findViewById(R.id.button_mod);
+        button_list = (Button)findViewById(R.id.button_list);
         button_mod.setOnClickListener(listener);
+        button_list.setOnClickListener(listener);
         dishContent = new ArrayList<HashMap<String,String>>();
         dishAdapter = new SimpleAdapter(this,dishContent,R.layout.recommend_dish_item
                 ,new String[]{"tv_dish_name","tv_dish_price"}
@@ -288,18 +292,25 @@ public class MainActivity extends Activity {
                     MainActivity.this.startActivity(intent);
                     break;
                 }
+                case R.id.ivNo:{
+                    currentIndex++;
+                    handler.sendEmptyMessage(MSG_RENDER_VIEW);
+                    break;
+                }
                 case R.id.button_mod:{
                     Intent intent = new Intent();
                     intent.setClass(MainActivity.this, ModeActivity.class);
                     MainActivity.this.startActivity(intent);
                     MainActivity.this.finish();
                     break;
+
                 }
-                case R.id.ivNo:{
-                    currentIndex++;
-                    handler.sendEmptyMessage(MSG_RENDER_VIEW);
-                    break;
+                case R.id.button_list:{
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, HistoryActivity.class);
+                    MainActivity.this.startActivityForResult(intent, INTENT_TO_LIST);
                 }
+
             }
         }
     }

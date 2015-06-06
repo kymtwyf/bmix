@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivState"
+        android:padding="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="餐厅名"
+        android:id="@+id/tvName"
+        android:padding="5dp"
+        android:layout_toRightOf="@+id/ivState" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="人均"
+        android:id="@+id/tvAverage"
+        android:layout_toRightOf="@+id/tvName"
+        android:padding="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="评分"
+        android:id="@+id/tvRank"
+        android:layout_toRightOf="@+id/tvAverage"
+        android:padding="5dp" />
+</RelativeLayout>

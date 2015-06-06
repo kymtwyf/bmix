@@ -14,12 +14,17 @@ public class MyLog implements Serializable {
     private Bitmap icon;
     private Business business;
 
-    private int state;// 1 勾选过， 2 没勾过
+    private int state;// 1 勾选过， 2 没勾过 3 收藏
 
     public MyLog(){
         this.icon =null;
         this.business = null;
         this.state = 1;
+    }
+    public MyLog(Bitmap bm, Business business, int sate){
+        this.icon = bm;
+        this.business = business;
+        this.state = state;
     }
     public Bitmap getIcon() {
         return icon;
@@ -42,8 +47,8 @@ public class MyLog implements Serializable {
     }
 
     public void setState(int state) {
-        if(1 != state && 2 != state ){
-            state = 1;//你不能这么做吧，不给1不给2
+        if(1 != state && 2 != state && 3 != state){
+            state = 1;//你不能这么做吧，不给1不给2 也不给3
         }
         this.state = state;
     }
