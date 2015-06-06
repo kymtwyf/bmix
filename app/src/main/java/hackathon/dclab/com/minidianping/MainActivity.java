@@ -1,6 +1,7 @@
 package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,29 +31,15 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
-import com.google.gson.Gson;
 
 import org.apache.http.util.EncodingUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import hackathon.dclab.com.minidianping.domain.Business;
 import hackathon.dclab.com.minidianping.entities.GeoInfo;
@@ -88,7 +76,7 @@ public class MainActivity extends Activity {
     public static final int MSG_GET_ALL_MESSAGE = 2;
     private LocationClient mLocationClient = null;
 
-    private List<Business> businesses = new ArrayList<Business>();;
+    private List<Business> businesses = new ArrayList<Business>();
     private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
     private int currentIndex = 0;
 
@@ -105,6 +93,8 @@ public class MainActivity extends Activity {
     private boolean flag = false;
 
     private LogUtil logUtil;
+    TelephonyManager tm = null;
+    String android_id = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Remove title bar
@@ -114,6 +104,10 @@ public class MainActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        android_id = tm.getDeviceId();
+        System.out.println(android_id);
+
         circleProgress = (ProgressBar)findViewById(R.id.iv_progress);
         circleProgress.setIndeterminate(false);
         circleProgress.setVisibility(View.VISIBLE);
@@ -162,17 +156,15 @@ public class MainActivity extends Activity {
         //取得第一次的请求
         BDLocation location = DPApplication.getLocation();
         //GeoInfo geo = new GeoInfo("中国",location.getCity(),location.getDistrict(),location.getLatitude(),location.getLongitude());
-        GeoInfo geo = new GeoInfo("China","北京市","海淀区",39.990047,116.313096);
+        GeoInfo geo = new GeoInfo("China","北京市","海淀区",116.313096,39.990047);
         File file = new File("/data/data/hackathon.dclab.com.minidianping/files/mode.xml");
         Mode mode = null;
         if(!file.exists()) {
-             mode= new Mode(2, 1, 0x000000);
+             mode= new Mode(2, 1, 0x00000000);
              writeFile("mode.xml",mode);
         }
         mode = readFromXML("mode.xml");
-        //Mode mode = readFromXML("mode.xml");
-        Gson gs = new Gson();
-        HttpGetRecommend getRecommend = new HttpGetRecommend("123456",geo,mode);
+        HttpGetRecommend getRecommend = new HttpGetRecommend(android_id,geo,mode);
         String json = "";
         getRecommend.start();
         try {
@@ -182,7 +174,7 @@ public class MainActivity extends Activity {
         }
         json = getRecommend.getResult();
         if (json == ""){
-            getRecommend = new HttpGetRecommend("123456",geo,mode);
+            getRecommend = new HttpGetRecommend(android_id,geo,mode);
             getRecommend.start();
             try {
                 getRecommend.join();
@@ -193,14 +185,12 @@ public class MainActivity extends Activity {
         }
 //        businesses = Business.getBusinessFromJson(json);
         for(int i=0; i<businesses.size();++i){
-            System.out.println(businesses.get(i).ToString());
+            //System.out.println(businesses.get(i).ToString());
             bitmaps.add(null);//placeholder
-
         }
         //开启线程取图片
         (new Thread(testGetImg)).start();
         renderBusiness();
-        getRecommend.interrupt();
     }
 
 
@@ -475,7 +465,6 @@ public class MainActivity extends Activity {
         catch(Exception e){
             e.printStackTrace();
         }
-        System.out.println(res);
         String[] list = res.split(",");
         int number = Integer.parseInt(list[0]);
         int type = Integer.parseInt(list[1]);

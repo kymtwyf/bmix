@@ -83,7 +83,7 @@ public class NavActivity extends Activity{
         //更新地址信息
         address.setText(business.address);
         //更新电话信息
-        tele_text.setText(business.telephones.get(0));
+        tele_text.setText(business.telephones);
 
         //更新地图
         LatLng point = new LatLng(business.latitude, business.longitude);
@@ -162,6 +162,7 @@ public class NavActivity extends Activity{
         if(leaveCheckTime != 0)
             returnCheckTime = System.currentTimeMillis();
         if(returnCheckTime - leaveCheckTime > 1000){
+            leaveCheckTime = returnCheckTime;
             new AlertDialog.Builder(NavActivity.this)
                     .setTitle("请求评价")
                     .setMessage("我们猜测你可能吃了我们推荐的美食，请问要评价么？")
@@ -172,9 +173,6 @@ public class NavActivity extends Activity{
                             Bundle mbundle = new Bundle();
                             mbundle.putSerializable("business", business);
                             intent.putExtras(mbundle);
-                            if (sensorManager != null) {// 注册监听器
-                                sensorManager.unregisterListener(sensorEventListener);
-                            }
                             startActivity(intent);
                             NavActivity.this.finish();
                         }

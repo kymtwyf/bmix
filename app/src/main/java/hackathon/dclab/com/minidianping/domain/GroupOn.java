@@ -6,14 +6,12 @@ import java.io.Serializable;
  * Created by weicheng on 26/5/15.
  */
 public class GroupOn implements Serializable{
-    public GroupOn(String type,String name, int price, String url){
-        this.type = type;
-        this.name = name;
+    public GroupOn(String id, String url, String description){
+        this.id = id;
         this.url = url;
-        this.price = price;
+        this.description = description;
     }
-    private String type;
-    private String name;
+    private String id;
     private String url;
-    private int price;
+    private String description;
 }

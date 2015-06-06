@@ -53,7 +53,7 @@ public class DPApplication extends Application {
             sb.append(location.getAddrStr());
         }
 
-        Log.e("tagtag", sb.toString());
+        //Log.e("tagtag", sb.toString());
     }
 
     public class MyLocationListener implements BDLocationListener {
