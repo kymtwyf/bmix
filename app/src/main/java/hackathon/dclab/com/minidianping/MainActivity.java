@@ -181,9 +181,9 @@ public class MainActivity extends Activity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            json = getRecommend.getResult();
+//            json = getRecommend.getResult();
         }
-        businesses = Business.getBusinessFromJson(json);
+//        businesses = Business.getBusinessFromJson(json);
         for(int i=0; i<businesses.size();++i){
             //System.out.println(businesses.get(i).ToString());
             bitmaps.add(null);//placeholder
