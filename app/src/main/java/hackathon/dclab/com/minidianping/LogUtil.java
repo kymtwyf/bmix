@@ -28,6 +28,13 @@ public class LogUtil {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+//        logs = new ArrayList<MyLog>();
+//        try{
+//            InternalStorage.writeObject(context,STORAGE_KEY,logs);
+//
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
 
     }
     public void insertLog(MyLog log){

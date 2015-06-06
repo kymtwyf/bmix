@@ -56,6 +56,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import hackathon.dclab.com.minidianping.domain.Business;
 import hackathon.dclab.com.minidianping.entities.GeoInfo;
 import hackathon.dclab.com.minidianping.entities.Mode;
+import hackathon.dclab.com.minidianping.entities.MyLog;
 
 
 public class MainActivity extends Activity {
@@ -103,7 +104,7 @@ public class MainActivity extends Activity {
     private int iCount = 0;
     private boolean flag = false;
 
-
+    private LogUtil logUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Remove title bar
@@ -143,7 +144,7 @@ public class MainActivity extends Activity {
         lvRecommendDishes.setAdapter(dishAdapter);
         ivPreview.setScaleType(ImageView.ScaleType.FIT_XY);
         handler = new ViewUpdateHandler();
-
+        logUtil = new LogUtil(getApplicationContext());
         //定位相关
         SDKInitializer.initialize(getApplicationContext());
         mLocationClient = ((DPApplication)getApplication()).mLocationClient;
@@ -270,6 +271,13 @@ public class MainActivity extends Activity {
         option.setAddrType("all");//locating results include all address infos
         option.setIsNeedAddress(true);//include address infos
     }
+
+    @Override
+    protected void onPause() {
+        logUtil.storeLogs();
+        super.onPause();
+    }
+
     @Override
     protected void onDestroy() {
         // 退出时停止定位sdk
@@ -290,11 +298,20 @@ public class MainActivity extends Activity {
                     mbundle.putSerializable("business", businesses.get(currentIndex));
                     intent.putExtras(mbundle);
                     MainActivity.this.startActivity(intent);
+
+                    MyLog myLog = new MyLog();
+                    myLog.setBusiness(businesses.get(currentIndex));
+                    myLog.setState(1);
+                    logUtil.insertLog(myLog);
                     break;
                 }
                 case R.id.ivNo:{
-                    currentIndex++;
                     handler.sendEmptyMessage(MSG_RENDER_VIEW);
+                    MyLog myLog = new MyLog();
+                    myLog.setBusiness(businesses.get(currentIndex));
+                    myLog.setState(2);
+                    logUtil.insertLog(myLog);
+                    currentIndex++;
                     break;
                 }
                 case R.id.button_mod:{
@@ -307,7 +324,7 @@ public class MainActivity extends Activity {
                 }
                 case R.id.button_list:{
                     Intent intent = new Intent();
-                    intent.setClass(MainActivity.this, HistoryActivity.class);
+                    intent.setClass(MainActivity.this, NewHistoryActivity.class);
                     MainActivity.this.startActivityForResult(intent, INTENT_TO_LIST);
                 }
 

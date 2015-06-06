@@ -69,6 +69,10 @@ public class LvHistoryAdapter extends BaseAdapter {
             viewHolder = (ViewHolder)view.getTag();
         }
 
+        if(logs == null || logs.size() == 0){
+            Log.e("wocao,","没有LOG");
+            return view;
+        }
         Business curBus = logs.get(i).getBusiness();
         if(logs.get(i).getIcon() != null){
             viewHolder.ivState.setImageBitmap(logs.get(i).getIcon());

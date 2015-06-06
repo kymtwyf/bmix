@@ -7,10 +7,13 @@ package hackathon.dclab.com.minidianping.entities;
 import android.graphics.Bitmap;
 
 import java.io.Serializable;
+import java.util.List;
 
+import hackathon.dclab.com.minidianping.InternalStorage;
 import hackathon.dclab.com.minidianping.domain.Business;
 
 public class MyLog implements Serializable {
+    static final long serialVersionUID =5582055119083809202L;
     private Bitmap icon;
     private Business business;
 

@@ -75,7 +75,7 @@ public class Business implements Serializable{
             for(int i=0; i<businesses.length();++i){
                 JSONObject temp = (JSONObject)businesses.get(i);
                 //id
-                long id = temp.getLong("dp_business_id");
+                long id = temp.getLong("id");
                 //点评id
                 long business_id = temp.getLong("dp_business_id");
                 //餐厅名字
