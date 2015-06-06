@@ -16,7 +16,7 @@ import hackathon.dclab.com.minidianping.entities.MyLog;
  */
 public class LogUtil {
     public static String STORAGE_KEY = "LOG.db";
-    private List<MyLog> logs = null;
+    private static List<MyLog> logs = null;
     private Context context;
     public LogUtil(Context context){
         this.context = context;

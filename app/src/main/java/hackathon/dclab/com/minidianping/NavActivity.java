@@ -131,6 +131,7 @@ public class NavActivity extends Activity implements View.OnTouchListener {
         map.setMapStatus(mapStatusUpdate);
         yes.setOnClickListener(listener);
         tele_btn.setOnClickListener(listener);
+        collect.setOnClickListener(listener);
         mGestureDetector = new GestureDetector(this, new MyGestureListener(this));
         deal_text.setOnTouchListener(this);
     }
@@ -174,6 +175,7 @@ public class NavActivity extends Activity implements View.OnTouchListener {
                     myLog.setBusiness(business);
                     myLog.setState(3);
                     logUtil.insertLog(myLog);
+                    Toast.makeText(getApplicationContext(),"已收藏", Toast.LENGTH_SHORT).show();
                 }
 
             }
