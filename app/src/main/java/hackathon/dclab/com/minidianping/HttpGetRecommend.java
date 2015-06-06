@@ -1,5 +1,7 @@
 package hackathon.dclab.com.minidianping;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import org.apache.http.HttpResponse;
@@ -52,8 +54,11 @@ public class HttpGetRecommend extends Thread{
         setParams("geo_info",gs.toJson(geo));
         //System.out.println(gs.toJson(geo));
         setParams("mode", gs.toJson(mode));
+        setParams("latitude",geo.latitude+"");
+        setParams("longitude",geo.longitude+"");
         try {
             //发出HTTP request
+            Log.e("Net_Params",params.toString());
             strResult = NetUtils.postRequest(action,params);
         } catch (Exception e) {
             // TODO Auto-generated catch block

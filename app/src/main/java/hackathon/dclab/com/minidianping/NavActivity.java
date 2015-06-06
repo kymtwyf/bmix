@@ -83,7 +83,7 @@ public class NavActivity extends Activity{
         //更新地址信息
         address.setText(business.address);
         //更新电话信息
-        tele_text.setText(business.telephones.get(0));
+        tele_text.setText(business.telephones);
 
         //更新地图
         LatLng point = new LatLng(business.latitude, business.longitude);

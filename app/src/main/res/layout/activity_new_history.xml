@@ -1,14 +1,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hackathon.dclab.com.minidianping.HistoryActivity">
+    tools:context="hackathon.dclab.com.minidianping.HistoryActivity"
+    android:background="#ffdedede">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="bottom|center_horizontal"
-        android:id="@+id/ll_header_tab">
+        android:id="@+id/ll_header_tab"
+        android:background="@color/white">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -45,6 +47,13 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/rl_list_content"
-        android:layout_below="@+id/ll_header_tab"></RelativeLayout>
+        android:layout_below="@+id/ll_header_tab">
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/listView"
+            android:choiceMode="none" />
+    </RelativeLayout>
 
 </RelativeLayout>

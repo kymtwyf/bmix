@@ -44,10 +44,12 @@ import java.util.List;
 import hackathon.dclab.com.minidianping.domain.Business;
 import hackathon.dclab.com.minidianping.entities.GeoInfo;
 import hackathon.dclab.com.minidianping.entities.Mode;
+import hackathon.dclab.com.minidianping.entities.MyLog;
 
 
 public class MainActivity extends Activity {
     private static String TAG = "MainActivity";
+    public static final int INTENT_TO_LIST = 999;
     private TextView tvHeader;
     private TextView tvDistance;
     private ImageView ivPreview;
@@ -61,6 +63,7 @@ public class MainActivity extends Activity {
     private ImageView ivYes;
     private ImageView ivNo;
     private Button button_mod;
+    private Button button_list;
     private MyOnClickListener listener;
 
     private Handler handler;
@@ -89,10 +92,9 @@ public class MainActivity extends Activity {
     private int iCount = 0;
     private boolean flag = false;
 
+    private LogUtil logUtil;
     TelephonyManager tm = null;
     String android_id = "";
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Remove title bar
@@ -125,7 +127,9 @@ public class MainActivity extends Activity {
         ivYes.setOnClickListener(listener);
         ivNo.setOnClickListener(listener);
         button_mod = (Button)findViewById(R.id.button_mod);
+        button_list = (Button)findViewById(R.id.button_list);
         button_mod.setOnClickListener(listener);
+        button_list.setOnClickListener(listener);
         dishContent = new ArrayList<HashMap<String,String>>();
         dishAdapter = new SimpleAdapter(this,dishContent,R.layout.recommend_dish_item
                 ,new String[]{"tv_dish_name","tv_dish_price"}
@@ -134,7 +138,7 @@ public class MainActivity extends Activity {
         lvRecommendDishes.setAdapter(dishAdapter);
         ivPreview.setScaleType(ImageView.ScaleType.FIT_XY);
         handler = new ViewUpdateHandler();
-
+        logUtil = new LogUtil(getApplicationContext());
         //定位相关
         SDKInitializer.initialize(getApplicationContext());
         mLocationClient = ((DPApplication)getApplication()).mLocationClient;
@@ -152,11 +156,11 @@ public class MainActivity extends Activity {
         //取得第一次的请求
         BDLocation location = DPApplication.getLocation();
         //GeoInfo geo = new GeoInfo("中国",location.getCity(),location.getDistrict(),location.getLatitude(),location.getLongitude());
-        GeoInfo geo = new GeoInfo("China","北京市","海淀区",39.990047,116.313096);
+        GeoInfo geo = new GeoInfo("China","北京市","海淀区",116.313096,39.990047);
         File file = new File("/data/data/hackathon.dclab.com.minidianping/files/mode.xml");
         Mode mode = null;
         if(!file.exists()) {
-             mode= new Mode(2, 1, 0x000000);
+             mode= new Mode(2, 1, 0x00000000);
              writeFile("mode.xml",mode);
         }
         mode = readFromXML("mode.xml");
@@ -180,7 +184,6 @@ public class MainActivity extends Activity {
             json = getRecommend.getResult();
         }
         businesses = Business.getBusinessFromJson(json);
-
         for(int i=0; i<businesses.size();++i){
             //System.out.println(businesses.get(i).ToString());
             bitmaps.add(null);//placeholder
@@ -258,6 +261,13 @@ public class MainActivity extends Activity {
         option.setAddrType("all");//locating results include all address infos
         option.setIsNeedAddress(true);//include address infos
     }
+
+    @Override
+    protected void onPause() {
+        logUtil.storeLogs();
+        super.onPause();
+    }
+
     @Override
     protected void onDestroy() {
         // 退出时停止定位sdk
@@ -278,6 +288,20 @@ public class MainActivity extends Activity {
                     mbundle.putSerializable("business", businesses.get(currentIndex));
                     intent.putExtras(mbundle);
                     MainActivity.this.startActivity(intent);
+
+                    MyLog myLog = new MyLog();
+                    myLog.setBusiness(businesses.get(currentIndex));
+                    myLog.setState(1);
+                    logUtil.insertLog(myLog);
+                    break;
+                }
+                case R.id.ivNo:{
+                    handler.sendEmptyMessage(MSG_RENDER_VIEW);
+                    MyLog myLog = new MyLog();
+                    myLog.setBusiness(businesses.get(currentIndex));
+                    myLog.setState(2);
+                    logUtil.insertLog(myLog);
+                    currentIndex++;
                     break;
                 }
                 case R.id.button_mod:{
@@ -286,49 +310,14 @@ public class MainActivity extends Activity {
                     MainActivity.this.startActivity(intent);
                     MainActivity.this.finish();
                     break;
-                }
-                case R.id.ivNo:{
-                    Log.e("Main", "businesses's size " + businesses.size());
-                    Log.e("Main","currentIndex "+currentIndex);
-                    /*if(businesses.size()-currentIndex < 2){
-                        BDLocation location = DPApplication.getLocation();
-                        GeoInfo geo = new GeoInfo("中国",location.getCity(),location.getDistrict(),location.getLatitude(),location.getLongitude());
-                        Mode mode = readFromXML("mode.xml");
-                        HttpGetRecommend getRecommend = new HttpGetRecommend(android_id,geo,mode);
-                        String json = "";
-                        getRecommend.start();
-                        try {
-                            getRecommend.join();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        json = getRecommend.getResult();
-                        if (json == ""){
-                            getRecommend = new HttpGetRecommend(android_id,geo,mode);
-                            getRecommend.start();
-                            try {
-                                getRecommend.join();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            json = getRecommend.getResult();
-                        }
-                        List<Business> businesses_temp;
-                        businesses_temp = Business.getBusinessFromJson(json);
-                        businesses.addAll(businesses_temp);
-                        for(int i=0; i<businesses_temp.size();++i){
-                            //System.out.println(businesses_temp.get(i).ToString());
-                            bitmaps.add(null);//placeholder
-                        }
-                        //开启线程取图片
-                        (new Thread(testGetImg)).start();
-                        renderBusiness();
-                    }*/
 
-                    handler.sendEmptyMessage(MSG_RENDER_VIEW);
-                    currentIndex++;
-                    break;
                 }
+                case R.id.button_list:{
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, NewHistoryActivity.class);
+                    MainActivity.this.startActivityForResult(intent, INTENT_TO_LIST);
+                }
+
             }
         }
     }
