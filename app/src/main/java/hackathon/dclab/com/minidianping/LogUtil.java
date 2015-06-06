@@ -21,13 +21,16 @@ public class LogUtil {
     public LogUtil(Context context){
         this.context = context;
         logs = new ArrayList<MyLog>();
-//        try {
-//            logs = (List<MyLog>)InternalStorage.readObject(context,STORAGE_KEY);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            logs = (List<MyLog>)InternalStorage.readObject(context,STORAGE_KEY);
+//            if(logs.size()!= 0){
+//                logs.get(logs.size()-1).setState(3);
+//            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 //        logs = new ArrayList<MyLog>();
 //        try{
 //            InternalStorage.writeObject(context,STORAGE_KEY,logs);

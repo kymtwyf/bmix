@@ -37,6 +37,7 @@ import com.baidu.mapapi.model.LatLng;
 import java.net.URISyntaxException;
 
 import hackathon.dclab.com.minidianping.domain.Business;
+import hackathon.dclab.com.minidianping.entities.MyLog;
 
 /**
  * Created by weicheng on 1/6/15.
@@ -63,6 +64,7 @@ public class NavActivity extends Activity{
     private long leaveCheckTime = 0;
     private long returnCheckTime = 0;
 
+    private LogUtil logUtil;
     @Override
     protected void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
@@ -76,6 +78,7 @@ public class NavActivity extends Activity{
         collect = (ImageView)findViewById(R.id.nav_collect);
         tele_btn = (ImageView)findViewById(R.id.nav_tel_btn);
         tele_text = (TextView)findViewById(R.id.nav_tel_context);
+        logUtil = new LogUtil(getApplicationContext());
         listener = new MyOnClickListener();
 
         //更新餐厅名字
@@ -133,6 +136,12 @@ public class NavActivity extends Activity{
                     }
                     break;
                 }
+                case R.id.nav_collect:{
+                    MyLog myLog = new MyLog();
+                    myLog.setBusiness(business);
+                    myLog.setState(3);
+                    logUtil.insertLog(myLog);
+                }
 
             }
         }
@@ -184,6 +193,12 @@ public class NavActivity extends Activity{
             sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
             // 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
         }
+    }
+
+    @Override
+    protected void onPause() {
+        logUtil.storeLogs();
+        super.onPause();
     }
 
     @Override
