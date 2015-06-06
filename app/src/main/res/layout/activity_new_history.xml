@@ -4,10 +4,10 @@
     tools:context="hackathon.dclab.com.minidianping.HistoryActivity"
     android:background="#ffdedede">
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:gravity="bottom|center_horizontal"
         android:id="@+id/ll_header_tab"
         android:background="@color/white">
@@ -15,17 +15,22 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp">
 
             <TextView android:text="历史" android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvHistory"
                 android:textSize="22dp"
                 android:padding="5dp"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentLeft="false"
                 android:layout_marginLeft="0dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="0dp" />
+                android:layout_alignParentTop="false"
+                android:layout_marginTop="0dp"
+                android:layout_alignParentBottom="true" />
 
             <TextView
                 android:text="收藏"
@@ -37,17 +42,44 @@
                 android:layout_alignParentLeft="false"
                 android:layout_alignParentTop="false"
                 android:layout_marginTop="0dp"
-                android:layout_toRightOf="@+id/tvHistory" />
+                android:layout_toRightOf="@+id/tvHistory"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentBottom="true" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="5dp"
+                android:id="@+id/ivIndicator"
+                android:background="@color/color_splitter_red"
+                android:layout_alignParentBottom="true" />
 
         </RelativeLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="@dimen/header_icon_width_height"
+        android:layout_height="@dimen/header_icon_width_height"
+        android:id="@+id/tvBack"
+        android:layout_alignParentLeft="false"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="false"
+        android:layout_marginTop="0dp"
+        android:layout_margin="15dp"
+        android:background="@drawable/back_btn" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:id="@+id/imageView2"
+        android:layout_below="@+id/ll_header_tab"
+        android:background="@color/color_splitter_red" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/rl_list_content"
-        android:layout_below="@+id/ll_header_tab">
+        android:layout_below="@+id/imageView2">
 
         <ListView
             android:layout_width="wrap_content"

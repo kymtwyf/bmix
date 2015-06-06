@@ -2,6 +2,7 @@ package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -22,6 +23,7 @@ import hackathon.dclab.com.minidianping.entities.MyLog;
 public class NewHistoryActivity extends Activity {
     private ListView listView;
     private SimpleAdapter logAdapter;
+    private TextView tvBack;
     private ArrayList<Map<String,String>> logListContent;
     private List<MyLog> allLogs;
     int[] stateIcons = new int[]{R.drawable.button1,R.drawable.button2,R.drawable.banner_info_bg};//test
@@ -29,6 +31,7 @@ public class NewHistoryActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_history);
+        tvBack = (TextView)findViewById(R.id.tvBack);
         allLogs = (new LogUtil(this)).getLogs();
         logListContent = new ArrayList<>();
 
@@ -56,6 +59,14 @@ public class NewHistoryActivity extends Activity {
             listView = (ListView)findViewById(R.id.listView);
             listView.setAdapter(logAdapter);
         }
+
+        tvBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+
+            }
+        });
 
     }
 }
