@@ -22,7 +22,7 @@ import hackathon.dclab.com.minidianping.entities.Mode;
  * Created by weicheng on 30/5/15.
  */
 public class HttpGetRecommend extends Thread{
-    String action="http://pybackend.mybluemix.net/find_businesses";
+    public static String action="http://pybackend.mybluemix.net/find_businesses";
     HttpPost httpRequest=null;
     List<NameValuePair> params=null;
     HttpResponse httpResponse;
