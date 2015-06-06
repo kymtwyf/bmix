@@ -241,12 +241,15 @@ public class ModeActivity extends Activity {
     private void setButton(Mode mode){
         if(mode.number==1){
             singleperson.setChecked(true);
+            singleperson.setBackgroundResource(R.drawable.eval_icon2_on);
         }
         if(mode.number==2){
             doubleperson.setChecked(true);
+            doubleperson.setBackgroundResource(R.drawable.eval_icon1_on);
         }
         if(mode.number==3){
             multiperson.setChecked(true);
+            multiperson.setBackgroundResource(R.drawable.eval_icon3_on);
         }
         if(mode.type==1){
             guessyoulike.setChecked(true);
@@ -257,27 +260,35 @@ public class ModeActivity extends Activity {
         int stype = mode.stype;
         if((stype & 1) == 1){
             chuancai.setChecked(true);
+            chuancai.setBackgroundResource(R.drawable.eval_sp3_on);
         }
         if(((stype &(1<<1)) >>1 )==1){
             yuecai.setChecked(true);
+            yuecai.setBackgroundResource(R.drawable.eval_sp4_on);
         }
         if(((stype &(1<<2)) >> 2)==1){
             xibei.setChecked(true);
+            xibei.setBackgroundResource(R.drawable.eval_sp6_on);
         }
         if(((stype &(1<<3)) >> 3)==1){
             dongnanya.setChecked(true);
+            dongnanya.setBackgroundResource(R.drawable.eval_sp5_on);
         }
         if(((stype &(1<<4)) >> 4)==1){
             dongbei.setChecked(true);
+            dongbei.setBackgroundResource(R.drawable.eval_sp9_on);
         }
         if(((stype &(1<<5)) >> 5)==1){
             huoguo.setChecked(true);
+            huoguo.setBackgroundResource(R.drawable.eval_sp7_on);
         }
         if(((stype &(1<<6)) >> 6)==1){
             xican.setChecked(true);
+            xican.setBackgroundResource(R.drawable.eval_sp8_on);
         }
         if(((stype &(1<<7)) >> 7)==1){
             cafe.setChecked(true);
+            cafe.setBackgroundResource(R.drawable.eval_sp10_on);
         }
         if(((stype &(1<<8)) >> 8)==1){
             others.setChecked(true);
