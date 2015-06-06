@@ -80,7 +80,8 @@ public class ModeActivity extends Activity {
                     stype |= 1;
                 }
                 if(yuecai.isChecked()){
-                    stype |= 1;
+                    int temp = 1 << 1;
+                    stype |= temp;
                 }
                 if(xibei.isChecked()){
                     int temp = 1 << 2;

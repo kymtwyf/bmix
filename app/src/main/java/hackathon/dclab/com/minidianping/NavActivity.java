@@ -162,6 +162,7 @@ public class NavActivity extends Activity{
         if(leaveCheckTime != 0)
             returnCheckTime = System.currentTimeMillis();
         if(returnCheckTime - leaveCheckTime > 1000){
+            leaveCheckTime = returnCheckTime;
             new AlertDialog.Builder(NavActivity.this)
                     .setTitle("请求评价")
                     .setMessage("我们猜测你可能吃了我们推荐的美食，请问要评价么？")
@@ -172,9 +173,6 @@ public class NavActivity extends Activity{
                             Bundle mbundle = new Bundle();
                             mbundle.putSerializable("business", business);
                             intent.putExtras(mbundle);
-                            if (sensorManager != null) {// 注册监听器
-                                sensorManager.unregisterListener(sensorEventListener);
-                            }
                             startActivity(intent);
                             NavActivity.this.finish();
                         }
