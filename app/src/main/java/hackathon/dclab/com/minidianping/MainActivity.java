@@ -77,6 +77,8 @@ public class MainActivity extends Activity {
 
     private Handler handler;
     private Handler vihandler;//摇一摇的handler
+    private long lastCheckTime = 0;
+    private final long INTERVAL = 100;
 
     public static final int MSG_UPDATE_PREVIEW = 0;
     public static final int MSG_RENDER_VIEW = 1;
@@ -155,7 +157,7 @@ public class MainActivity extends Activity {
         //取得第一次的请求
         BDLocation location = DPApplication.getLocation();
         //GeoInfo geo = new GeoInfo("中国",location.getCity(),location.getDistrict(),location.getLatitude(),location.getLongitude());
-        GeoInfo geo = new GeoInfo("China","Shanghai","Minhang",0,0);
+        GeoInfo geo = new GeoInfo("China","北京市","海淀区",39.990047,116.313096);
         File file = new File("/data/data/hackathon.dclab.com.minidianping/files/mode.xml");
         Mode mode = null;
         if(!file.exists()) {
@@ -335,12 +337,17 @@ public class MainActivity extends Activity {
         public void onSensorChanged(SensorEvent event) {
             if(!flag)
                 return;
+            long currentCheckTime = System.currentTimeMillis();
+            long interval = currentCheckTime - lastCheckTime;
+            if(interval < INTERVAL)
+                return;
+            lastCheckTime = currentCheckTime;
             // 传感器信息改变时执行该方法
             float[] values = event.values;
             float x = values[0]; // x轴方向的重力加速度，向右为正
             float y = values[1]; // y轴方向的重力加速度，向前为正
             float z = values[2]; // z轴方向的重力加速度，向上为正
-            int medumValue = 13;// 多次调试，设置到13
+            int medumValue = 19;// 多次调试，设置到13
             if (Math.abs(x) > medumValue || Math.abs(y) > medumValue || Math.abs(z) > medumValue) {
                 vibrator.vibrate(200);
                 Message msg = new Message();
@@ -365,8 +372,8 @@ public class MainActivity extends Activity {
             switch (msg.what) {
                 case SENSOR_SHAKE:
                     Log.i(TAG, "检测到摇晃，执行操作！");
-                    ivYes.performClick();
-                    sensorManager.unregisterListener(sensorEventListener);
+                    ivNo.performClick();
+                    //sensorManager.unregisterListener(sensorEventListener);
                     break;
             }
         }

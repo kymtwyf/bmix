@@ -1,6 +1,8 @@
 package hackathon.dclab.com.minidianping;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -58,6 +60,8 @@ public class NavActivity extends Activity{
     private Handler vihandler;//摇一摇的handler
     protected static final int STOP = 0x10000;
     protected static final int NEXT = 0x10001;
+    private long leaveCheckTime = 0;
+    private long returnCheckTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstance){
@@ -93,7 +97,7 @@ public class NavActivity extends Activity{
         OverlayOptions option = new MarkerOptions().position(point).icon(bitmap);
         map = mapView.getMap();
         map.addOverlay(option);
-        mapStatus = new MapStatus.Builder().target(point).zoom(16).build();
+        mapStatus = new MapStatus.Builder().target(point).zoom(17).build();
         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mapStatus);
         map.setMapStatus(mapStatusUpdate);
         yes.setOnClickListener(listener);
@@ -122,6 +126,7 @@ public class NavActivity extends Activity{
                                 "&mode=driving"+
                                 "&region="+city+
                                 "&referer=SJTU|MiniDianping#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end");
+                        leaveCheckTime = System.currentTimeMillis();
                         startActivity(intent); //启动调用
                     } catch (URISyntaxException e) {
                         Log.e("intent", e.getMessage());
@@ -154,6 +159,29 @@ public class NavActivity extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
+        if(leaveCheckTime != 0)
+            returnCheckTime = System.currentTimeMillis();
+        if(returnCheckTime - leaveCheckTime > 1000){
+            new AlertDialog.Builder(NavActivity.this)
+                    .setTitle("请求评价")
+                    .setMessage("我们猜测你可能吃了我们推荐的美食，请问要评价么？")
+                    .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(NavActivity.this,EvaluateActivity.class);
+                            Bundle mbundle = new Bundle();
+                            mbundle.putSerializable("business", business);
+                            intent.putExtras(mbundle);
+                            if (sensorManager != null) {// 注册监听器
+                                sensorManager.unregisterListener(sensorEventListener);
+                            }
+                            startActivity(intent);
+                            NavActivity.this.finish();
+                        }
+                    })
+                    .setNegativeButton("否", null)
+                    .show();
+        }
         if (sensorManager != null) {// 注册监听器
             sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
             // 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
@@ -180,7 +208,7 @@ public class NavActivity extends Activity{
             float x = values[0]; // x轴方向的重力加速度，向右为正
             float y = values[1]; // y轴方向的重力加速度，向前为正
             float z = values[2]; // z轴方向的重力加速度，向上为正
-            int medumValue = 13;// 多次调试，设置到13
+            int medumValue = 15;// 多次调试，设置到15
             if (Math.abs(x) > medumValue || Math.abs(y) > medumValue || Math.abs(z) > medumValue) {
                 vibrator.vibrate(200);
                 Message msg = new Message();
