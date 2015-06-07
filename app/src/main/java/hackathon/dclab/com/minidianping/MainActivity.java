@@ -518,7 +518,7 @@ public class MainActivity extends Activity {
 //        private Map<String,String> params = new HashMap<>();
         @Override
         protected void onPreExecute() {
-            Toast.makeText(getApplicationContext(),"Loading in background", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(),"Loading in background", Toast.LENGTH_SHORT).show();
             setParams("user_id", android_id);
             setParams("latitude", geo.latitude + "");
             setParams("longitude", geo.longitude + "");
@@ -551,7 +551,7 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(Boolean bool) {
             if(bool){
-                Toast.makeText(getApplicationContext(),"缓冲完成",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),"缓冲完成",Toast.LENGTH_SHORT).show();
                 businesses.addAll(asyncResults);
                 bitmaps.addAll(asyncBitmaps);
             }else{

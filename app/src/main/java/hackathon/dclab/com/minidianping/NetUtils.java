@@ -125,11 +125,11 @@ public class NetUtils {
     private synchronized static DefaultHttpClient getHttpClient() {
         HttpParams params = new BasicHttpParams();
 		/* 从连接池中取连接的超时时间 */
-        ConnManagerParams.setTimeout(params, 10000);
+        ConnManagerParams.setTimeout(params, 30000);
 		/* 连接超时 */
-        HttpConnectionParams.setConnectionTimeout(params, 10000);
+        HttpConnectionParams.setConnectionTimeout(params, 30000);
 		/* 请求超时 */
-        HttpConnectionParams.setSoTimeout(params, 10000);
+        HttpConnectionParams.setSoTimeout(params, 30000);
         // 设置我们的HttpClient支持HTTP和HTTPS两种模式
         SchemeRegistry reg = new SchemeRegistry();
         SSLSocketFactory sf = null;
