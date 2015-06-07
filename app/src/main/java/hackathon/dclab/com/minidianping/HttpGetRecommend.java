@@ -29,8 +29,9 @@ public class HttpGetRecommend extends Thread{
     String userid;
     GeoInfo geo;
     Mode mode;
+    int page;
     String strResult = "";
-    public HttpGetRecommend(String userid, GeoInfo geo, Mode mode) {
+    public HttpGetRecommend(String userid, GeoInfo geo, Mode mode, int page) {
         /*建立HttpPost连接*/
         httpRequest=new HttpPost(action);
         /*Post运作传送变数必须用NameValuePair[]阵列储存*/
@@ -38,6 +39,7 @@ public class HttpGetRecommend extends Thread{
         this.userid = userid;
         this.geo = geo;
         this.mode = mode;
+        this.page = page;
     }
 
     public void setParams(String key, String value) {
@@ -56,6 +58,7 @@ public class HttpGetRecommend extends Thread{
         setParams("mode", gs.toJson(mode));
         setParams("latitude",geo.latitude+"");
         setParams("longitude",geo.longitude+"");
+        setParams("page",page+"");
         try {
             //发出HTTP request
             Log.e("Net_Params",params.toString());

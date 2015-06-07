@@ -92,14 +92,6 @@ public class NavActivity extends Activity implements View.OnTouchListener {
         if(business.groupon.size() > currentDealIndex) {
             deal_text.setText(business.groupon.get(currentDealIndex).description);
             deal_text.setMovementMethod(ScrollingMovementMethod.getInstance());
-            /*deal_text.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Uri uri = Uri.parse(business.groupon.get(0).url);
-                    Intent it = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(it);
-                }
-            });*/
         }
         else{
             deal_text.setText("暂无团购");

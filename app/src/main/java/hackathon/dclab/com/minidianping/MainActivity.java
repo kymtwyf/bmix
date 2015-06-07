@@ -95,6 +95,11 @@ public class MainActivity extends Activity {
     private LogUtil logUtil;
     TelephonyManager tm = null;
     String android_id = "";
+
+    private HttpGetRecommend getRecommend = null;
+    private boolean try_downloading = false;
+    private int page = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Remove title bar
@@ -164,7 +169,7 @@ public class MainActivity extends Activity {
              writeFile("mode.xml",mode);
         }
         mode = readFromXML("mode.xml");
-        HttpGetRecommend getRecommend = new HttpGetRecommend(android_id,geo,mode);
+        getRecommend = new HttpGetRecommend(android_id,geo,mode,page);
         String json = "";
         getRecommend.start();
         try {
@@ -174,7 +179,7 @@ public class MainActivity extends Activity {
         }
         json = getRecommend.getResult();
         if (json == ""){
-            getRecommend = new HttpGetRecommend(android_id,geo,mode);
+            getRecommend = new HttpGetRecommend(android_id,geo,mode,page);
             getRecommend.start();
             try {
                 getRecommend.join();
@@ -265,6 +270,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         logUtil.storeLogs();
+        sensorManager.unregisterListener(sensorEventListener);
         super.onPause();
     }
 
@@ -301,6 +307,43 @@ public class MainActivity extends Activity {
                     myLog.setBusiness(businesses.get(currentIndex));
                     myLog.setState(2);
                     logUtil.insertLog(myLog);
+                    Log.e("DEBUG", businesses.size() + " " + currentIndex);
+                    if(businesses.size() - currentIndex< 4){
+                        Log.e("DEBUG","Start to download another");
+                        String json = "";
+                        if(try_downloading){
+                            if(getRecommend.getResult()!=""){
+                                //System.out.println("finish download\n");
+                                json = getRecommend.getResult();
+                                try_downloading = false;
+                                List<Business> businesses_temp = Business.getBusinessFromJson(json);
+                                for(int i=0; i<businesses_temp.size();++i){
+                                    System.out.println(businesses_temp.get(i).ToString());
+                                    bitmaps.add(null);//placeholder
+                                }
+                                businesses.addAll(businesses_temp);
+                                for(int i=0; i<currentIndex;++i){
+                                    businesses.remove(i);
+                                }
+                                for(int i=0; i<currentIndex; ++i){
+                                    bitmaps.remove(i);
+                                }
+                                currentIndex -= currentIndex;
+                                //开启线程取图片
+                                (new Thread(testGetImg)).start();
+                                renderBusiness();
+                            }
+                        }
+                        else{
+                            BDLocation location = DPApplication.getLocation();
+                            GeoInfo geo = new GeoInfo("中国",location.getCity(),location.getDistrict(),location.getLongitude(),location.getLatitude());
+                            Mode mode = readFromXML("mode.xml");
+                            page++;
+                            getRecommend = new HttpGetRecommend(android_id,geo,mode,page);
+                            getRecommend.start();
+                            try_downloading = true;
+                        }
+                    }
                     currentIndex++;
                     break;
                 }

@@ -38,8 +38,8 @@ public class EvaluateActivity extends Activity {
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                score = (double)i/10.0;
-                scoreView.setText(""+score);
+                score = (double) i / 10.0;
+                scoreView.setText("" + score);
             }
 
             @Override
@@ -58,15 +58,26 @@ public class EvaluateActivity extends Activity {
         choose2 = (TextView)findViewById(R.id.eval_choose_2);
         choose3 = (TextView)findViewById(R.id.eval_choose_3);
         choose4 = (TextView)findViewById(R.id.eval_choose_4);
+        listener = new MyListener();
         choose1.setText(business.favourite_dishes.get(0).name);
         choose2.setText(business.favourite_dishes.get(1).name);
-        choose3.setText(business.favourite_dishes.get(0).name);
-        choose4.setText(business.favourite_dishes.get(1).name);
-        listener = new MyListener();
+        if(business.favourite_dishes.size()>2) {
+            choose3.setText(business.favourite_dishes.get(2).name);
+            choose3.setOnClickListener(listener);
+        }
+        else{
+            choose3.setVisibility(View.GONE);
+        }
+        if(business.favourite_dishes.size()>3) {
+            choose3.setText(business.favourite_dishes.get(3).name);
+            choose4.setOnClickListener(listener);
+        }
+        else{
+            choose3.setVisibility(View.GONE);
+        }
+
         choose1.setOnClickListener(listener);
         choose2.setOnClickListener(listener);
-        choose3.setOnClickListener(listener);
-        choose4.setOnClickListener(listener);
 
         yes = (ImageView)findViewById(R.id.eval_yes);
         yes.setOnClickListener(listener);
@@ -121,9 +132,9 @@ public class EvaluateActivity extends Activity {
                     break;
                 }
                 case R.id.eval_yes:{
-                    Intent intent = new Intent(EvaluateActivity.this,MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    //Intent intent = new Intent(EvaluateActivity.this,MainActivity.class);
+                    //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    //startActivity(intent);
                     EvaluateActivity.this.finish();
                     break;
                 }
