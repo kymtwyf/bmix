@@ -8,6 +8,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,12 +27,16 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
+import com.google.gson.Gson;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EncodingUtils;
 
 import java.io.File;
@@ -40,6 +45,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import hackathon.dclab.com.minidianping.domain.Business;
 import hackathon.dclab.com.minidianping.entities.GeoInfo;
@@ -95,10 +101,7 @@ public class MainActivity extends Activity {
     private LogUtil logUtil;
     TelephonyManager tm = null;
     String android_id = "";
-
-    private HttpGetRecommend getRecommend = null;
-    private boolean try_downloading = false;
-    private int page = 0;
+    GeoInfo geo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +164,7 @@ public class MainActivity extends Activity {
         //取得第一次的请求
         BDLocation location = DPApplication.getLocation();
         //GeoInfo geo = new GeoInfo("中国",location.getCity(),location.getDistrict(),location.getLatitude(),location.getLongitude());
-        GeoInfo geo = new GeoInfo("China","北京市","海淀区",116.313096,39.990047);
+        geo = new GeoInfo("China","北京市","海淀区",116.313096,39.990047);
         File file = new File("/data/data/hackathon.dclab.com.minidianping/files/mode.xml");
         Mode mode = null;
         if(!file.exists()) {
@@ -205,6 +208,9 @@ public class MainActivity extends Activity {
             currentIndex--;
             Log.e("出错了","到最后一个了，或者 business为null");
             return;
+        }
+        if(currentIndex > businesses.size() - 5){
+            new AsyncGetBusiness().execute();
         }
         Business curBus = businesses.get(currentIndex);
         tvHeader.setText(curBus.name);
@@ -536,5 +542,60 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
+    }
+
+    private class AsyncGetBusiness extends AsyncTask<Void,Void,Boolean> {
+//        public AsyncGetBusiness(){
+//
+//        }
+        List<Business> asyncResults = new ArrayList<>();
+        List<Bitmap> asyncBitmaps = new ArrayList<>();
+        List<NameValuePair> params = new ArrayList<>();
+        String resultStr = "";
+
+//        private Map<String,String> params = new HashMap<>();
+        @Override
+        protected void onPreExecute() {
+//            Toast.makeText(getApplicationContext(),"Loading in background", Toast.LENGTH_SHORT).show();
+            setParams("user_id", android_id);
+            setParams("latitude", geo.latitude + "");
+            setParams("longitude", geo.longitude + "");
+            setParams("mode", new Gson().toJson(mode));
+
+            super.onPreExecute();
+        }
+        public void setParams(String key, String value) {
+            params.add(new BasicNameValuePair(key,value));
+        }
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                resultStr = NetUtils.postRequest(HttpGetRecommend.action,params);
+                asyncResults = Business.getBusinessFromJson(resultStr);
+                if(asyncResults == null || asyncResults.size() == 0) {
+                    throw new Exception();
+                }else{
+                    for(int i = 0 ; i < asyncResults.size() ; i ++){
+                        asyncBitmaps.add(NetUtils.getBitmap(asyncResults.get(i).pic_url));
+                    }
+                    return true;
+                }
+            }catch(Exception e){
+                return false;
+
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bool) {
+            if(bool){
+//                Toast.makeText(getApplicationContext(),"缓冲完成",Toast.LENGTH_SHORT).show();
+                businesses.addAll(asyncResults);
+                bitmaps.addAll(asyncBitmaps);
+            }else{
+                Toast.makeText(getApplicationContext(),"缓冲失败",Toast.LENGTH_SHORT).show();
+            }
+            super.onPostExecute(bool);
+        }
     }
 }

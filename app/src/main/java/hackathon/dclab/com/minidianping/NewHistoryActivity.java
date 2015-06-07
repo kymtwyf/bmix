@@ -127,6 +127,7 @@ public class NewHistoryActivity extends Activity {
                             MyLog myLog = allLogs.get(i);
                             Business business = myLog.getBusiness();
                             if(!allIds.contains(business.id) && myLog.getState() == 3){
+//                                allLogs.remove(myLog);
                                 allIds.add(business.id);
                                 HashMap<String,String> hm = new HashMap<>();
                                 hm.put("tvName",business.name);
