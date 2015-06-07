@@ -103,6 +103,10 @@ public class MainActivity extends Activity {
     String android_id = "";
     GeoInfo geo;
 
+    private HttpGetRecommend getRecommend = null;
+    private int page = 0;
+    private boolean try_downloading = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Remove title bar
