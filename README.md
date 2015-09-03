@@ -1,5 +1,5 @@
 # bmix
-#### Bluemix 短跑节作品 - Android端
+#### [Bluemix 短跑节](http://bmix.csdn.net/)作品 - Android端
 
 ---
 ## Idea
